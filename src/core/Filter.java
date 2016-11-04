@@ -17,14 +17,15 @@ public class Filter {
 		for(Particle p: particles) {
 			double gauss1 = randomSeed.nextGaussian();
 			double gauss2 = randomSeed.nextGaussian();			
-			double dx = movement[0]+ gauss1*0.5;
-			double dy = movement[1]+= gauss2*0.5;
+			double dx = movement[0]+ gauss1*0.2;
+			double dy = movement[1]+ gauss2*0.2;
 			
 			double newX = p.getX() + dx;
 			double newY = p.getY() + dy;
-			double newP = Map.crossesWall(p,newX, newY) ? 0 : gauss1 * gauss2;
-			p = new Particle(newX, newY, newP);			
-			
+			double newP = Map.crossesWall(p, newX, newY) ? 0 : 1;
+			p.setX(newX);
+			p.setY(newY);
+			p.setP(newP);			
 			totalWeight += newP;
 		}
 		
@@ -35,10 +36,13 @@ public class Filter {
 			double rand = randomSeed.nextDouble();
 			double sumSoFar = 0;
 			int dex = 0;
-			while((particles.get(dex).getP()/totalWeight) + sumSoFar < rand && dex<particles.size())
+			while(((particles.get(dex).getP()/totalWeight) + sumSoFar)< rand && (dex<particles.size()-1)) {
+				sumSoFar += particles.get(dex).getP()/totalWeight;
 				dex++; // multinomial sampling
+			}
 			
-			newParticles.add(particles.get(dex));
+			Particle p = particles.get(dex);
+			newParticles.add(new Particle(p.getX(),p.getY()));
 			//TODO: separate functions for each filter step, binary search			
 		}
 		
