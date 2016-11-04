@@ -1,14 +1,14 @@
-/**
- * 
- */
 package core;
 
 
 public class Main {
 
 	public static void main(String[] args) {
-		System.out.println("ffsgit");
-
+		//generate initial particle list
+		//while(InputGenerator.hasInputs() {
+			//Filter.performStep();
+		//  Map.visualize()
+		//}
 	}
 
 }
