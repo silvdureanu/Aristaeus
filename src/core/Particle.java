@@ -1,9 +1,11 @@
 package core;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Particle {
-	private double x,y,p;
+	private double x,y,p,h;
 	private static List<Particle> particles;
 	//TODO change with new class, ParticleSet, to allow multiple filters @ same time
 	//each filter has a particleset, the map and visualiser may be extended to multiple particle sets
@@ -31,6 +33,10 @@ public class Particle {
 		return p;
 	}
 	
+	public double getH(){
+		return h;
+	}
+	
 	public void setX(double nx) {
 		x = nx;
 	}
@@ -43,6 +49,10 @@ public class Particle {
 		p = np;
 	}
 	
+	public void setH(double nh) {
+		h=nh;
+	}
+	
 	
 	public static List<Particle> getParticles() {
 		return particles;
@@ -50,6 +60,18 @@ public class Particle {
 	
 	public static void setParticles(List<Particle> p) {
 		particles = p;
+	}
+	
+	public static void seedParticles() {
+		particles = new ArrayList<Particle>();
+		int nrSeeded = 0;
+		Random randomSeed = new Random();
+		while(nrSeeded<2000) {
+			int xCoord = randomSeed.nextInt(1000);
+			int yCoord = randomSeed.nextInt(500);
+			particles.add(new Particle(xCoord,yCoord));
+			nrSeeded++;			
+		}
 	}
 	
 	public boolean crossesWall(Particle p, double newX, double newY) {

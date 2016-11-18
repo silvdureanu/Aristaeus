@@ -18,30 +18,13 @@ public class Main {
 	static public Input inputGenerator = new InputGenerator();
 
 	public static void main(String[] args) {
-		//generate initial particle list	
-		List<Particle> initialParticles = new ArrayList<Particle>();
-		int nrSeeded = 0;
-		Random randomSeed = new Random();
-		while(nrSeeded<2000) {
-			int xCoord = randomSeed.nextInt(100);
-			int yCoord = randomSeed.nextInt(100);
-			initialParticles.add(new Particle(xCoord,yCoord));
-			nrSeeded++;			
-		}
-		
-		Particle.setParticles(initialParticles);		
+		Particle.seedParticles();		
 		Visualiser visualiser = new Visualiser();		
-		visualiser.visualise();
-		
-		
-		
+		visualiser.visualise();		
 		while(inputGenerator.hasInputs()) {
 			try{Thread.sleep(1000);}
 			catch(Exception e){};
-			filter.performStep();
-			
-		}
-		
+			filter.performStep();			
+		}		
 	}
-
 }
