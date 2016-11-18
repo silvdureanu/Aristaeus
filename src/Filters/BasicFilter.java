@@ -20,8 +20,8 @@ public class BasicFilter implements Filter {
 		for(Particle p: particles) {
 			double gauss1 = randomSeed.nextGaussian();
 			double gauss2 = randomSeed.nextGaussian();			
-			double dx = movement[0]+ gauss1*10;
-			double dy = movement[1]+ gauss2*10;
+			double dx = movement[0]+ gauss1*20;
+			double dy = movement[1]+ gauss2*20;
 			
 			double newX = p.getX() + dx;
 			double newY = p.getY() + dy;

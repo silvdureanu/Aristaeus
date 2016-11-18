@@ -23,8 +23,8 @@ public class Main {
 		int nrSeeded = 0;
 		Random randomSeed = new Random();
 		while(nrSeeded<2000) {
-			int xCoord = randomSeed.nextInt(1000);
-			int yCoord = randomSeed.nextInt(500);
+			int xCoord = randomSeed.nextInt(100);
+			int yCoord = randomSeed.nextInt(100);
 			initialParticles.add(new Particle(xCoord,yCoord));
 			nrSeeded++;			
 		}

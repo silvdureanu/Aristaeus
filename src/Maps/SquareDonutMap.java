@@ -22,10 +22,17 @@ public class SquareDonutMap implements Map {
 	private  GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel());
 	private  ShapeWriter shapeWriter = new ShapeWriter();
 	private  Point realLocation = geometryFactory.createPoint(new Coordinate(10,10));	
-	static int[][] segments = new int[][]{
+	static int[][] basicDonut = new int[][]{
 		{5,5,5,995},{5,995,495,995},{495,995,495,5},{495,5,5,5},
 		{100,100,100,900},{100,900,400,900},{400,900,400,100},{400,100,100,100}
 	};
+	
+	static int[][] trapDonut= new int[][] {
+		{5,5,5,995},{5,995,495,995},{495,995,495,5},{495,5,5,5},
+		{100,100,100,830},{100,830,300,830},{300,830,300,870},{300,870,100,870},{100,870,100,900},{100,900,400,900},{400,900,400,100},{400,100,100,100}		
+	};
+	
+	static int[][] segments = trapDonut;
 	
 	public void setUpMap() {
 		LineString[] points = new LineString[segments.length];
@@ -33,6 +40,7 @@ public class SquareDonutMap implements Map {
 			Coordinate[] coords = new Coordinate[2];
 			coords[0] = new Coordinate(segments[i][1],segments[i][0]);
 			coords[1] = new Coordinate(segments[i][3],segments[i][2]);
+			//TODO fix this
 			points[i] = geometryFactory.createLineString(coords);
 		}		
 		map = geometryFactory.createMultiLineString(points);			
