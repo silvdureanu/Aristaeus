@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import Filters.BasicFilter;
+import Filters.Filter;
+import Inputs.Input;
+import Inputs.InputGenerator;
+import Maps.Map;
+import Maps.SquareDonutMap;
+
 public class Main {
 	
 	static int[][] coords = new int[][]{
@@ -11,9 +18,9 @@ public class Main {
 		{100,100,100,900},{100,900,400,900},{400,900,400,100},{400,100,100,100}
 	}; // map
 	
-	static public Map map =  new Map(coords);
-	static public Filter filter = new Filter();	
-	static public InputGenerator inputGenerator = new InputGenerator();
+	static public Map map =  new SquareDonutMap(coords);
+	static public Filter filter = new BasicFilter();	
+	static public Input inputGenerator = new InputGenerator();
 
 	public static void main(String[] args) {
 		//generate initial particle list

@@ -3,16 +3,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Color;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.Timer;
-
-
-
 
 public class Visualiser {	
 	
@@ -31,7 +26,6 @@ public class Visualiser {
         public void paint(Graphics g) {
         	super.paint(g);
             Graphics2D drawer = (Graphics2D)g;
-
             drawer.draw(walls);
             drawer.setColor(Color.RED);
             drawer.draw(realLocation);

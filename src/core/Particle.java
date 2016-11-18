@@ -5,6 +5,8 @@ import java.util.List;
 public class Particle {
 	private double x,y,p;
 	private static List<Particle> particles;
+	//TODO change with new class, ParticleSet, to allow multiple filters @ same time
+	//each filter has a particleset, the map and visualiser may be extended to multiple particle sets
 	
 	public Particle(double xloc, double yloc, double prob) {
 		x=xloc;
