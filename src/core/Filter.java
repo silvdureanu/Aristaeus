@@ -11,24 +11,25 @@ public class Filter {
 		List<Particle> newParticles = new ArrayList<Particle>();
 		
 		Random randomSeed = new Random();
-		double[] movement = InputGenerator.generateInput();
+		double[] movement = InputGenerator.generateStepInput();
 		double totalWeight = 0;
+		int nrnot = 0;
 		
 		for(Particle p: particles) {
 			double gauss1 = randomSeed.nextGaussian();
 			double gauss2 = randomSeed.nextGaussian();			
-			double dx = movement[0]+ gauss1*0.2;
-			double dy = movement[1]+ gauss2*0.2;
+			double dx = movement[0]+ gauss1*10;
+			double dy = movement[1]+ gauss2*10;
 			
 			double newX = p.getX() + dx;
 			double newY = p.getY() + dy;
 			double newP = Map.crossesWall(p, newX, newY) ? 0 : 1;
+
 			p.setX(newX);
 			p.setY(newY);
 			p.setP(newP);			
 			totalWeight += newP;
 		}
-		
 		
 		
 		
@@ -40,13 +41,12 @@ public class Filter {
 				sumSoFar += particles.get(dex).getP()/totalWeight;
 				dex++; // multinomial sampling
 			}
-			
 			Particle p = particles.get(dex);
 			newParticles.add(new Particle(p.getX(),p.getY()));
-			//TODO: separate functions for each filter step, binary search			
+				
 		}
 		
-		particles = newParticles;		
+		Particle.setParticles(newParticles); 		
 	}
 
 }
