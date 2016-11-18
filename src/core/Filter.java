@@ -24,6 +24,8 @@ public class Filter {
 			double newX = p.getX() + dx;
 			double newY = p.getY() + dy;
 			double newP = Map.crossesWall(p, newX, newY) ? 0 : 1;
+			if(Map.outsideBounds(newX,newY))
+				newP = 0;
 
 			p.setX(newX);
 			p.setY(newY);

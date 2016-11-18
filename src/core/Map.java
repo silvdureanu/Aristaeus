@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.vividsolutions.jts.awt.ShapeWriter;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -37,6 +38,11 @@ public class Map {
 		coords[1] = new Coordinate(newX, newY);
 		LineString particlePath = geometryFactory.createLineString(coords);
 		return particlePath.intersects(map);			
+	}
+	
+	public static boolean outsideBounds(double newX, double newY) {
+		Geometry envelope = map.getEnvelope();
+		return !envelope.covers(geometryFactory.createPoint(new Coordinate(newX,newY)));
 	}
 	
 	public static Shape getWalls() {
