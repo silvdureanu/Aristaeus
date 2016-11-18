@@ -9,11 +9,12 @@ public class Particle {
 	private static List<Particle> particles;
 	//TODO change with new class, ParticleSet, to allow multiple filters @ same time
 	//each filter has a particleset, the map and visualiser may be extended to multiple particle sets
+
 	
-	public Particle(double xloc, double yloc, double prob) {
+	public Particle(double xloc, double yloc, double hloc) {
 		x=xloc;
 		y=yloc;
-		p=prob;
+		h=hloc;
 	}
 	
 	public Particle(double xloc, double yloc) {
@@ -69,7 +70,8 @@ public class Particle {
 		while(nrSeeded<2000) {
 			int xCoord = randomSeed.nextInt(1000);
 			int yCoord = randomSeed.nextInt(500);
-			particles.add(new Particle(xCoord,yCoord));
+			int hDir = randomSeed.nextInt(4);
+			particles.add(new Particle(xCoord,yCoord,hDir));
 			nrSeeded++;			
 		}
 	}

@@ -1,21 +1,17 @@
 package core;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import Filters.BasicFilter;
+import Filters.DirectionalFilter;
 import Filters.Filter;
+import Inputs.HeadingInput;
 import Inputs.Input;
-import Inputs.InputGenerator;
 import Maps.Map;
 import Maps.SquareDonutMap;
 
 public class Main {
 	
 	static public Map map =  new SquareDonutMap();
-	static public Filter filter = new BasicFilter();	
-	static public Input inputGenerator = new InputGenerator();
+	static public Filter filter = new DirectionalFilter();	
+	static public Input inputGenerator = new HeadingInput();
 
 	public static void main(String[] args) {
 		Particle.seedParticles();		
