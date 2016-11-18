@@ -22,8 +22,12 @@ public class SquareDonutMap implements Map {
 	private  GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel());
 	private  ShapeWriter shapeWriter = new ShapeWriter();
 	private  Point realLocation = geometryFactory.createPoint(new Coordinate(10,10));	
+	static int[][] segments = new int[][]{
+		{5,5,5,995},{5,995,495,995},{495,995,495,5},{495,5,5,5},
+		{100,100,100,900},{100,900,400,900},{400,900,400,100},{400,100,100,100}
+	};
 	
-	public SquareDonutMap(int[][] segments) {
+	public void setUpMap() {
 		LineString[] points = new LineString[segments.length];
 		for(int i=0; i<segments.length; i++) {
 			Coordinate[] coords = new Coordinate[2];
@@ -31,7 +35,11 @@ public class SquareDonutMap implements Map {
 			coords[1] = new Coordinate(segments[i][3],segments[i][2]);
 			points[i] = geometryFactory.createLineString(coords);
 		}		
-		map = geometryFactory.createMultiLineString(points);		
+		map = geometryFactory.createMultiLineString(points);			
+	}
+	
+	public SquareDonutMap() {
+		setUpMap();
 	}
 	
 	public  boolean crossesWall(Particle p, double newX, double newY) {

@@ -13,18 +13,12 @@ import Maps.SquareDonutMap;
 
 public class Main {
 	
-	static int[][] coords = new int[][]{
-		{5,5,5,995},{5,995,495,995},{495,995,495,5},{495,5,5,5},
-		{100,100,100,900},{100,900,400,900},{400,900,400,100},{400,100,100,100}
-	}; // map
-	
-	static public Map map =  new SquareDonutMap(coords);
+	static public Map map =  new SquareDonutMap();
 	static public Filter filter = new BasicFilter();	
 	static public Input inputGenerator = new InputGenerator();
 
 	public static void main(String[] args) {
-		//generate initial particle list
-	
+		//generate initial particle list	
 		List<Particle> initialParticles = new ArrayList<Particle>();
 		int nrSeeded = 0;
 		Random randomSeed = new Random();

@@ -8,6 +8,7 @@ public interface Map {
 	
 	public  boolean crossesWall(Particle p, double x,double y);
 	public boolean outsideBounds(double x, double y);
+	public void setUpMap();
 	public  Shape getWalls();	
 	public  Shape getRealLocation();	
 	public  Shape getParticles();
