@@ -16,10 +16,10 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 
 public class Map {
 	
-	private static MultiLineString map;
-	private static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel());
-	private static ShapeWriter shapeWriter = new ShapeWriter();
-	private static Point realLocation = geometryFactory.createPoint(new Coordinate(10,10));	
+	private  MultiLineString map;
+	private  GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel());
+	private  ShapeWriter shapeWriter = new ShapeWriter();
+	private  Point realLocation = geometryFactory.createPoint(new Coordinate(10,10));	
 	
 	public Map(int[][] segments) {
 		LineString[] points = new LineString[segments.length];
@@ -32,7 +32,7 @@ public class Map {
 		map = geometryFactory.createMultiLineString(points);		
 	}
 	
-	public static boolean crossesWall(Particle p, double newX, double newY) {
+	public  boolean crossesWall(Particle p, double newX, double newY) {
 		Coordinate[] coords = new Coordinate[2];
 		coords[0] = new Coordinate(p.getX(),p.getY());
 		coords[1] = new Coordinate(newX, newY);
@@ -40,22 +40,22 @@ public class Map {
 		return particlePath.intersects(map);			
 	}
 	
-	public static boolean outsideBounds(double newX, double newY) {
+	public  boolean outsideBounds(double newX, double newY) {
 		Geometry envelope = map.getEnvelope();
 		return !envelope.covers(geometryFactory.createPoint(new Coordinate(newX,newY)));
 	}
 	
-	public static Shape getWalls() {
+	public  Shape getWalls() {
 		return shapeWriter.toShape(map);
 	}
 	
-	public static Shape getRealLocation() {
+	public  Shape getRealLocation() {
 		return shapeWriter.toShape(realLocation);
 	}
 	
-	public static Shape getParticles() {
+	public  Shape getParticles() {
 		MultiPoint particles;		
-		List<Particle> particleList = Particle.getParticles();		
+		List<Particle> particleList = Particle.getParticles();	
 		Point[] pointList = new Point[particleList.size()];		
 		int i=0;		
 		for(Particle p: particleList) {

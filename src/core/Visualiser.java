@@ -16,15 +16,15 @@ import javax.swing.Timer;
 
 public class Visualiser {	
 	
-    public static class Image extends JPanel{
+    public  class Image extends JPanel{
         private Shape walls;
         private Shape realLocation; 
         private Shape particles;
         
         public Image() {
-        	walls = Map.getWalls();
-        	realLocation = Map.getRealLocation();  
-        	particles = Map.getParticles();
+        	walls = Main.map.getWalls();
+        	realLocation = Main.map.getRealLocation();  
+        	particles = Main.map.getParticles();
         }
        
         @Override
@@ -40,16 +40,16 @@ public class Visualiser {
         }        
 
         public void updateRealLocation() {
-        	realLocation = Map.getRealLocation();
+        	realLocation = Main.map.getRealLocation();
         }
         
         public void updateParticles() {
-        	particles = Map.getParticles();
+        	particles = Main.map.getParticles();
         }
     }
-    static Image thingsToDraw = new Image();    
+     Image thingsToDraw = new Image();    
     
-    public static void animate(){
+    public  void animate(){
         JFrame frame = new JFrame();
         frame.add(thingsToDraw);        
         Timer timer = new Timer(1000/60,new Redraw());
@@ -59,7 +59,7 @@ public class Visualiser {
         frame.setVisible(true);
     }
 
-    public static class Redraw implements ActionListener{
+    public  class Redraw implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent arg0) {
         	thingsToDraw.updateRealLocation();
@@ -68,7 +68,7 @@ public class Visualiser {
         }
     }
 	
-	public static void visualise() {
+	public  void visualise() {
 	      javax.swing.SwingUtilities.invokeLater(new Runnable(){
 	            @Override
 	            public void run(){

@@ -6,25 +6,25 @@ import java.util.Random;
 
 public class Filter {
 	
-	public static void performStep() {
+	public void performStep() {
 		List<Particle> particles = Particle.getParticles();
 		List<Particle> newParticles = new ArrayList<Particle>();
 		
 		Random randomSeed = new Random();
-		double[] movement = InputGenerator.generateStepInput();
+		double[] movement = Main.inputGenerator.generateStepInput();
 		double totalWeight = 0;
 		int nrnot = 0;
 		
 		for(Particle p: particles) {
 			double gauss1 = randomSeed.nextGaussian();
 			double gauss2 = randomSeed.nextGaussian();			
-			double dx = movement[0]+ gauss1*10;
-			double dy = movement[1]+ gauss2*10;
+			double dx = movement[0]+ gauss1*15;
+			double dy = movement[1]+ gauss2*15;
 			
 			double newX = p.getX() + dx;
 			double newY = p.getY() + dy;
-			double newP = Map.crossesWall(p, newX, newY) ? 0 : 1;
-			if(Map.outsideBounds(newX,newY))
+			double newP = Main.map.crossesWall(p, newX, newY) ? 0 : 1;
+			if(Main.map.outsideBounds(newX,newY))
 				newP = 0;
 
 			p.setX(newX);

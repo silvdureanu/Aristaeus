@@ -51,6 +51,6 @@ public class Particle {
 	}
 	
 	public boolean crossesWall(Particle p, double newX, double newY) {
-		return Map.crossesWall(p, newX, newY);
+		return Main.map.crossesWall(p, newX, newY);
 	}
 }
