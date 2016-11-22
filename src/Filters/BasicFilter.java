@@ -9,7 +9,33 @@ import core.Particle;
 
 public class BasicFilter implements Filter {
 	
+	
+	
+	
+	static int bsearch(double value, double[] v) {  // returns min(i) s.t. v[i]>=value
+		int hi,lo,mid;
+		lo = 0; 
+		hi = v.length-1;
+		
+		while(hi-lo >1) {
+			mid = lo + (hi-lo)/2; //avoid overflow in case of billions of particles
+			if (v[mid]>=value)
+				hi=mid;
+			else
+				lo = mid+1;
+			
+		}
+		
+		if(hi==lo)
+			return hi;
+		else if(v[lo]<value)
+			return hi;
+		return lo;
+		
+	}
+	
 	public void performStep() {
+		long startTime = System.nanoTime();
 		List<Particle> particles = Particle.getParticles();
 		List<Particle> newParticles = new ArrayList<Particle>();
 		
@@ -34,18 +60,22 @@ public class BasicFilter implements Filter {
 			totalWeight += newP;
 		}
 		
+		
+		double sumSoFar[] = new double[particles.size()];
+		sumSoFar[0] = particles.get(0).getP() / totalWeight;
+		
+		for(int i=2; i<particles.size(); i++) 
+			sumSoFar[i] = sumSoFar[i-1]+ particles.get(i).getP()/totalWeight;
+		
+			
+		
 		for (int i=0; i<particles.size(); i++) {
 			double rand = randomSeed.nextDouble();
-			double sumSoFar = 0;
-			int dex = 0;
-			while(((particles.get(dex).getP()/totalWeight) + sumSoFar)< rand && (dex<particles.size()-1)) {
-				sumSoFar += particles.get(dex).getP()/totalWeight;
-				dex++; // multinomial sampling
-			}
+			int dex = bsearch(rand,sumSoFar);
 			Particle p = particles.get(dex);
 			newParticles.add(new Particle(p.getX(),p.getY()));				
 		}
-		
-		Particle.setParticles(newParticles); 		
+		Particle.setParticles(newParticles); 	
+		System.out.println((System.nanoTime()-startTime)/1000000000);
 	}
 }
