@@ -38,6 +38,7 @@ public class BasicFilter implements Filter {
 		long startTime = System.nanoTime();
 		List<Particle> particles = Particle.getParticles();
 		List<Particle> newParticles = new ArrayList<Particle>();
+		double newP;
 		
 		Random randomSeed = new Random();
 		double[] movement = Main.inputGenerator.generateStepInput();
@@ -51,9 +52,14 @@ public class BasicFilter implements Filter {
 			
 			double newX = p.getX() + dx;
 			double newY = p.getY() + dy;
-			double newP = Main.map.crossesWall(p, newX, newY) ? 0 : 1;
 			if(Main.map.outsideBounds(newX,newY))
 				newP = 0;
+			else 
+				newP = Main.map.crossesWall(p, newX, newY) ? 0 : 1;
+				//newP = 1;
+			
+
+
 			p.setX(newX);
 			p.setY(newY);
 			p.setP(newP);			
@@ -76,6 +82,6 @@ public class BasicFilter implements Filter {
 			newParticles.add(new Particle(p.getX(),p.getY()));				
 		}
 		Particle.setParticles(newParticles); 	
-		System.out.println((System.nanoTime()-startTime)/1000000000);
+		//System.out.println((System.nanoTime()-startTime)/1000000000);
 	}
 }

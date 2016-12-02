@@ -7,7 +7,7 @@ import java.util.Random;
 import core.Main;
 import core.Particle;
 
-public class DirectionalFilter implements Filter {
+public class PolarFilter implements Filter {
 	
 	static int bsearch(double value, double[] v) {  // returns min(i) s.t. v[i]>=value
 		int hi,lo,mid;
@@ -39,27 +39,20 @@ public class DirectionalFilter implements Filter {
 		double totalWeight = 0;
 		
 		for(Particle p: particles) {
-			double gauss1 = randomSeed.nextGaussian();				
-			double dm = movement[0]+ gauss1*5;
-			int dh=(int)movement[1];
+			double gauss1 = randomSeed.nextGaussian();	
+			double gauss2 = randomSeed.nextGaussian();
+			double dm = movement[0]+ gauss1 * 5;
+			double dh=movement[1] + gauss2 * 4;
 			
-			int newH = ((int)p.getH()+dh)%4;			
-			double newX = p.getX();
-			double newY = p.getY();
-			
-			switch(newH) {
-			case 0: newY -= dm;
-					break;
-			case 1: newX += dm;
-					break;
-			case 2: newY += dm;
-					break;
-			case 3: newX -= dm;
-					break;			
-			}
-			double newP = Main.map.crossesWall(p, newX, newY) ? 0 : 1;
+			double newH = ((int)p.getH()+dh)%360;			
+			double newX = p.getX() + dm * Math.cos(Math.toRadians(newH));
+			double newY = p.getY()- dm * Math.sin(Math.toRadians(newH)); // Y coordinates start at the top, so need to invert
+			double newP;
 			if(Main.map.outsideBounds(newX,newY))
 				newP = 0;
+			
+			else newP = Main.map.crossesWall(p, newX, newY) ? 0 : 1;
+
 			p.setX(newX);
 			p.setY(newY);
 			p.setP(newP);	
