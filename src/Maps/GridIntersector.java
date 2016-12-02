@@ -21,8 +21,7 @@ public class GridIntersector {
 		cellheight = (double)my / nry;
 		
 		gridSegments = new ArrayList[nrx][nry];
-		grid = new Rectangle2D[nrx][nry];
-		
+		grid = new Rectangle2D[nrx][nry];		
 
 		//build set of lines intersecting each cell
 		for(int i = 0; i<nrx; i++)
@@ -37,10 +36,7 @@ public class GridIntersector {
 					}
 				}
 				
-			}
-		
-		
-		
+			}	
 	}
 	
 	public boolean crossesWall(double x1, double y1, double x2, double y2) {
@@ -62,11 +58,4 @@ public class GridIntersector {
 			}
 		return false;
 	}
-	
-	
-	
-	
-	
-	
-	
 }

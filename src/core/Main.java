@@ -4,12 +4,12 @@ import Filters.Filter;
 import Filters.PolarFilter;
 import Inputs.Input;
 import Inputs.PolarInput;
-import Maps.FastCrossMap;
-import Maps.Map;
+import SkeletonMaps.FirstSkeleton;
+import SkeletonMaps.SkeletonMap;
 
 public class Main {
 	
-	static public Map map =  new FastCrossMap();
+	static public SkeletonMap map =  new FirstSkeleton();
 	static public Filter filter = new PolarFilter();	
 	static public Input inputGenerator = new PolarInput();
 
