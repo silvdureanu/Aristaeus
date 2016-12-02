@@ -1,24 +1,24 @@
 package core;
 
-import Filters.BasicFilter;
 import Filters.Filter;
+import Filters.PolarFilter;
 import Inputs.Input;
-import Inputs.InputGenerator;
+import Inputs.PolarInput;
+import Maps.FastCrossMap;
 import Maps.Map;
-import Maps.SquareDonutMap;
 
 public class Main {
 	
-	static public Map map =  new SquareDonutMap();
-	static public Filter filter = new BasicFilter();	
-	static public Input inputGenerator = new InputGenerator();
+	static public Map map =  new FastCrossMap();
+	static public Filter filter = new PolarFilter();	
+	static public Input inputGenerator = new PolarInput();
 
 	public static void main(String[] args) {
 		Particle.seedParticles();		
 		new Visualiser().visualise();	
 		while(inputGenerator.hasInputs()) {
-			try{Thread.sleep(1000);}
-			catch(Exception e){};
+			//try{Thread.sleep(1000);}
+			//catch(Exception e){};
 			filter.performStep();			
 		}		
 	}

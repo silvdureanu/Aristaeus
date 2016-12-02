@@ -67,10 +67,10 @@ public class Particle {
 		particles = new ArrayList<Particle>();
 		int nrSeeded = 0;
 		Random randomSeed = new Random();
-		while(nrSeeded<2000) {
+		while(nrSeeded<500000) {
 			int xCoord = randomSeed.nextInt(1000);
 			int yCoord = randomSeed.nextInt(500);
-			int hDir = randomSeed.nextInt(4);
+			int hDir = randomSeed.nextInt(360)+1;
 			particles.add(new Particle(xCoord,yCoord,hDir));
 			nrSeeded++;			
 		}
