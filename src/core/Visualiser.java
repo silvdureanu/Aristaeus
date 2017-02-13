@@ -1,15 +1,25 @@
 package core;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.awt.Color;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import Maps.PrimitiveMap;
+
 public class Visualiser {	
+	PrimitiveMap map;
+	Image thingsToDraw;
+	
+	public Visualiser(PrimitiveMap mp) {
+		map = mp;
+	    thingsToDraw = new Image();   
+	}
 	
     public  class Image extends JPanel{
         private Shape walls;
@@ -17,9 +27,9 @@ public class Visualiser {
         private Shape particles;
         
         public Image() {
-        	walls = Main.map.getWalls();
-        	realLocation = Main.map.getRealLocation();  
-        	particles = Main.map.getParticles();
+        	walls = map.getWalls();
+        	realLocation = map.getRealLocation();  
+        	particles = map.getParticles();
         }
        
         @Override
@@ -34,14 +44,14 @@ public class Visualiser {
         }        
 
         public void updateRealLocation() {
-        	realLocation = Main.map.getRealLocation();
+        	realLocation = map.getRealLocation();
         }
         
         public void updateParticles() {
-        	particles = Main.map.getParticles();
+        	particles = map.getParticles();
         }
     }
-     Image thingsToDraw = new Image();    
+ 
     
     public  void animate(){
         JFrame frame = new JFrame();

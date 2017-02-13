@@ -1,11 +1,10 @@
-package SkeletonMaps;
+package Maps;
 
 import java.awt.Shape;
 import java.util.List;
 
 import com.vividsolutions.jts.awt.ShapeWriter;
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -13,8 +12,8 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
-import Maps.GridIntersector;
-import core.Particle;
+import Particles.SkeletonParticle;
+import core.Main;
 
 
 public class FirstSkeleton implements SkeletonMap {
@@ -62,10 +61,10 @@ public class FirstSkeleton implements SkeletonMap {
 			bones[1].addConnection(950, 50, bones[0]);
 			
 			bones[2].addConnection(50, 450, bones[3]);
-			bones[2].addConnection(950,450,bones[2]);
+			bones[2].addConnection(950,450,bones[1]);
 			
 			bones[3].addConnection(50, 50, bones[0]);
-			bones[3].addConnection(50, 450, bones[3]);
+			bones[3].addConnection(50, 450, bones[2]);
 	}
 	
 	public FirstSkeleton() {
@@ -87,19 +86,16 @@ public class FirstSkeleton implements SkeletonMap {
 	
 	public  Shape getParticles() {
 		MultiPoint particles;		
-		List<Particle> particleList = Particle.getParticles();	
+		List<SkeletonParticle> particleList = Main.skeleFilter.getParticles();	
 		Point[] pointList = new Point[particleList.size()];		
 		int i=0;		
-		for(Particle p: particleList) {
+		for(SkeletonParticle p: particleList) {
 			pointList[i] = geometryFactory.createPoint(new Coordinate(p.getX(),p.getY()));
 			i++;
 		}		
 		particles = geometryFactory.createMultiPoint(pointList);
 		return shapeWriter.toShape(particles);
-	}
-	
-	
-	
+	}	
 }
 
 

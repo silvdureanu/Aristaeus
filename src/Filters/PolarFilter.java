@@ -4,10 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import Particles.Particle;
+import Particles.ParticleSet;
 import core.Main;
-import core.Particle;
 
 public class PolarFilter implements Filter {
+	
+	private ParticleSet<Particle> particleSet ;
+	
+	public PolarFilter() {
+		particleSet = new ParticleSet<Particle>();
+		particleSet.seedParticles((Class)Particle.class, 500000);
+	}
 	
 	static int bsearch(double value, double[] v) {  // returns min(i) s.t. v[i]>=value
 		int hi,lo,mid;
@@ -31,7 +39,7 @@ public class PolarFilter implements Filter {
 	}
 	
 	public void performStep() {
-		List<Particle> particles = Particle.getParticles();
+		List<Particle> particles = particleSet.getParticles();
 		List<Particle> newParticles = new ArrayList<Particle>();
 		
 		Random randomSeed = new Random();
@@ -74,6 +82,10 @@ public class PolarFilter implements Filter {
 			newParticles.add(new Particle(p.getX(),p.getY(),p.getH()));				
 		}
 		
-		Particle.setParticles(newParticles); 		
+		particleSet.setParticles(newParticles); 		
 	}
+	public List<Particle> getParticles() {
+		return particleSet.getParticles();
+	}
+	
 }

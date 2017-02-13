@@ -1,24 +1,36 @@
-package core;
+package Particles;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import SkeletonMaps.Bone;
+import Maps.Bone;
+import core.Main;
 
 public class SkeletonParticle {
 	private Bone seg;
-	private double dist;
+	private double dist,prob;
 	private int dir;
-	private static List<SkeletonParticle> particles;
-	//TODO change with new class, ParticleSet, to allow multiple filters @ same time
-	//each filter has a particleset, the map and visualiser may be extended to multiple particle sets
 
 	
-	public SkeletonParticle(Bone b, double d, int dr ) {
+	public SkeletonParticle(Bone b, double d, int dr,double p ) {
 		seg = b;
 		dist = d;
 		dir = dr;
+		prob = p;
+	}
+	
+	public double getX() {
+		Point2D p1 = seg.getFirstPoint();
+		Point2D p2 = seg.getSecondPoint();	
+		return p1.getX() + dist* (p2.getX()-p1.getX());
+	}
+	
+	public double getY() {
+		Point2D p1 = seg.getFirstPoint();
+		Point2D p2 = seg.getSecondPoint();		
+		return p1.getY() + dist* (p2.getY()-p1.getY());
 	}
 	
 	public Bone getSeg() {
@@ -33,6 +45,9 @@ public class SkeletonParticle {
 		return dir;
 	}
 	
+	public double getProb() {
+		return prob;
+	}
 	
 	public void setSeg(Bone b) {
 		seg = b;
@@ -46,26 +61,12 @@ public class SkeletonParticle {
 		dir = d;
 	}
 	
-	public static List<SkeletonParticle> getParticles() {
-		return particles;
+	public void setProb(double p) {
+		prob = p;
 	}
 	
-	public static void setParticles(List<SkeletonParticle> p) {
-		particles = p;
-	}
+
 	
-	public static void seedParticles() {
-		particles = new ArrayList<SkeletonParticle>();
-		int nrSeeded = 0;
-		Bone[] bones = Main.map.getSkeleton();
-		Random randomSeed = new Random();
-		while(nrSeeded<500000) {
-			int boneCoord = randomSeed.nextInt(bones.length);
-			double length = randomSeed.nextDouble();
-			int dir = randomSeed.nextInt(1)+1;
-			particles.add(new SkeletonParticle(bones[boneCoord],length,dir));
-			nrSeeded++;			
-		}
-	}
+
 	
 }

@@ -13,7 +13,8 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
-import core.Particle;
+import Particles.Particle;
+import core.Main;
 
 
 public class FastCrossMap implements Map {
@@ -70,9 +71,10 @@ public class FastCrossMap implements Map {
 		return shapeWriter.toShape(realLocation);
 	}
 	
+	//TODO Make filters push updates to map - since there's just one map. 
 	public  Shape getParticles() {
 		MultiPoint particles;		
-		List<Particle> particleList = Particle.getParticles();	
+		List<Particle> particleList = Main.filter.getParticles();	
 		Point[] pointList = new Point[particleList.size()];		
 		int i=0;		
 		for(Particle p: particleList) {
