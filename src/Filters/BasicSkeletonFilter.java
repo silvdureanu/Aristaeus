@@ -17,7 +17,7 @@ public class BasicSkeletonFilter implements Filter {
 	
 	public BasicSkeletonFilter() {
 		particleSet = new ParticleSet<SkeletonParticle>();
-		particleSet.seedParticles((Class)SkeletonParticle.class, 1000);		
+		particleSet.seedParticles((Class)SkeletonParticle.class, 500);		
 	}
 	
 	static int bsearch(double value, double[] v) {  // returns min(i) s.t. v[i]>=value
@@ -61,7 +61,7 @@ public class BasicSkeletonFilter implements Filter {
 	public void performStep() {
 		List<SkeletonParticle> particles = particleSet.getParticles();
 		List<SkeletonParticle> newParticles = new ArrayList<SkeletonParticle>();
-		double epiphysis = 100; // depending on domain; Should probably be 1-1.5 avg "steps"?
+		double epiphysize = 100; // depending on domain; Should probably be 1-1.5 avg "steps"?
 		
 		Random randomSeed = new Random();
 		double[] movement = Main.inputGenerator.generateStepInput();
@@ -79,8 +79,8 @@ public class BasicSkeletonFilter implements Filter {
 			int dir = p.getDir();
 			
 			//TODO - hoist probability exponential instead of linear?			
-			if(bone.getLen() - p.getDist()*bone.getLen()<= epiphysis && dir==1) { // hoist at end of bone
-				double pHoistInv = (bone.getLen() - p.getDist()*bone.getLen()) / epiphysis; // inverse, for easy calc 
+			if(bone.getLen() - p.getDist()*bone.getLen()<= epiphysize && dir==1) { // hoist at end of bone
+				double pHoistInv = (bone.getLen() - p.getDist()*bone.getLen()) / epiphysize; // inverse, for easy calc 
 				if(randomSeed.nextDouble()>=pHoistInv) {
 					hoisted = true;
 					
@@ -106,7 +106,6 @@ public class BasicSkeletonFilter implements Filter {
 					//System.out.println(secondVector);
 					angle *= direction; // to have full trig circle			
 					newP = Math.cos(Math.abs(angle - Math.toRadians(dh) ));
-					//fishy maths here still, directions and stuff
 					
 					//System.out.println(newP);
 					if(newP<0.05)
@@ -122,8 +121,8 @@ public class BasicSkeletonFilter implements Filter {
 				}
 			}
 			
-			if(bone.getLen() * p.getDist() <=epiphysis && dir==2) { // hoist at start of bone
-				double pHoistInv = (bone.getLen() * p.getDist()) / epiphysis;
+			if(bone.getLen() * p.getDist() <=epiphysize && dir==2) { // hoist at start of bone
+				double pHoistInv = (bone.getLen() * p.getDist()) / epiphysize;
 				if(randomSeed.nextDouble()>=pHoistInv) {
 					hoisted = true;
 					Joint next =  bone.nextFirstBone(dh);
@@ -133,7 +132,7 @@ public class BasicSkeletonFilter implements Filter {
 					dir = next.getNextDir();
 					
 					int d = dir ==prevDir ? 1:-1;
-					System.out.println(d);
+					System.out.println(dir);
 					
 					Point2D secondVector = new Point2D.Double(d*(bone.getSecondPoint().getX()-bone.getFirstPoint().getX()),
 							d*(bone.getSecondPoint().getY()-bone.getFirstPoint().getY()));
@@ -147,8 +146,7 @@ public class BasicSkeletonFilter implements Filter {
 					int direction = crossProd(firstVector,secondVector) > 0 ? -1: 1; // inversion due to Y starting up
 					angle *= direction; // to have full trig circle			
 					
-					newP = Math.abs(Math.cos(Math.abs(angle - Math.toRadians(dh) )));					
-					//fishy maths here still
+					newP = -1*Math.cos(Math.abs(angle - Math.toRadians(dh) ));		//NO idea why this works			
 					
 					if(newP<0.05)
 						newP = 0;

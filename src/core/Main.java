@@ -20,7 +20,7 @@ public class Main {
 	public static void main(String[] args) {			
 		new Visualiser(skeleMap).visualise();
 		while(inputGenerator.hasInputs()) {
-			try{Thread.sleep(1000);}
+			try{Thread.sleep(2000);}
 			catch(Exception e){};
 			skeleFilter.performStep();			
 		}		
