@@ -61,7 +61,7 @@ public class BasicSkeletonFilter implements Filter {
 	public void performStep() {
 		List<SkeletonParticle> particles = particleSet.getParticles();
 		List<SkeletonParticle> newParticles = new ArrayList<SkeletonParticle>();
-		double tipSize = 100; // depending on domain; Should probably be 1-1.5 avg "steps"?
+		double epiphysis = 100; // depending on domain; Should probably be 1-1.5 avg "steps"?
 		
 		Random randomSeed = new Random();
 		double[] movement = Main.inputGenerator.generateStepInput();
@@ -79,22 +79,24 @@ public class BasicSkeletonFilter implements Filter {
 			int dir = p.getDir();
 			
 			//TODO - hoist probability exponential instead of linear?			
-			if(bone.getLen() - p.getDist()*bone.getLen()<= tipSize && dir==1) { // hoist at end of bone
-				double pHoistInv = (bone.getLen() - p.getDist()*bone.getLen()) / tipSize; // inverse, for easy calc 
+			if(bone.getLen() - p.getDist()*bone.getLen()<= epiphysis && dir==1) { // hoist at end of bone
+				double pHoistInv = (bone.getLen() - p.getDist()*bone.getLen()) / epiphysis; // inverse, for easy calc 
 				if(randomSeed.nextDouble()>=pHoistInv) {
 					hoisted = true;
 					
 					Joint next =  bone.nextSecondBone(dh);
 					Bone nextBone= next.getNextBone();
 					
-					int initdir = dir;
+					int prevDir = dir;
 					dir = next.getNextDir();
+					
+					int d = dir ==prevDir ? 1:-1;
 					
 					Point2D firstVector = new Point2D.Double(bone.getSecondPoint().getX()-bone.getFirstPoint().getX(),
 							bone.getSecondPoint().getY()-bone.getFirstPoint().getY());
 					
-					Point2D secondVector = new Point2D.Double(nextBone.getSecondPoint().getX()-nextBone.getFirstPoint().getX(),
-							nextBone.getSecondPoint().getY()-nextBone.getFirstPoint().getY());
+					Point2D secondVector = new Point2D.Double(d*(nextBone.getSecondPoint().getX()-nextBone.getFirstPoint().getX()),
+							d*(nextBone.getSecondPoint().getY()-nextBone.getFirstPoint().getY()));
 					
 					double angle = Math.acos(dotProd(firstVector,secondVector)/ firstVector.distance(0, 0) / firstVector.distance(0, 0));
 					int direction = crossProd(firstVector,secondVector) > 0 ? -1: 1; // inversion due to Y starting up
@@ -103,10 +105,10 @@ public class BasicSkeletonFilter implements Filter {
 					//System.out.print(' ');
 					//System.out.println(secondVector);
 					angle *= direction; // to have full trig circle			
-					newP = Math.abs(Math.cos(Math.abs(angle - Math.toRadians(dh) )));
+					newP = Math.cos(Math.abs(angle - Math.toRadians(dh) ));
 					//fishy maths here still, directions and stuff
 					
-					System.out.println(newP);
+					//System.out.println(newP);
 					if(newP<0.05)
 						newP = 0;
 					
@@ -120,20 +122,21 @@ public class BasicSkeletonFilter implements Filter {
 				}
 			}
 			
-			if(bone.getLen() * p.getDist() <=tipSize && dir==2) { // hoist at start of bone
-				double pHoistInv = (bone.getLen() * p.getDist()) / tipSize;
+			if(bone.getLen() * p.getDist() <=epiphysis && dir==2) { // hoist at start of bone
+				double pHoistInv = (bone.getLen() * p.getDist()) / epiphysis;
 				if(randomSeed.nextDouble()>=pHoistInv) {
 					hoisted = true;
 					Joint next =  bone.nextFirstBone(dh);
 					Bone nextBone= next.getNextBone();
 					
-					int initdir = dir;
+					int prevDir = dir;
 					dir = next.getNextDir();
-					int d1 = initdir ==1 ? 1:-1;
-					int d2 = dir ==1 ? 1:-1;
 					
-					Point2D secondVector = new Point2D.Double(bone.getSecondPoint().getX()-bone.getFirstPoint().getX(),
-							bone.getSecondPoint().getY()-bone.getFirstPoint().getY());
+					int d = dir ==prevDir ? 1:-1;
+					System.out.println(d);
+					
+					Point2D secondVector = new Point2D.Double(d*(bone.getSecondPoint().getX()-bone.getFirstPoint().getX()),
+							d*(bone.getSecondPoint().getY()-bone.getFirstPoint().getY()));
 					
 					Point2D firstVector = new Point2D.Double(nextBone.getSecondPoint().getX()-nextBone.getFirstPoint().getX(),
 							nextBone.getSecondPoint().getY()-nextBone.getFirstPoint().getY());
