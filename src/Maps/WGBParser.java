@@ -33,7 +33,7 @@ public class WGBParser {
 		int yy2=(int)y2;
 		
 		
-		floor.add(new int[]{yy1,xx1,yy2,xx2}); // swap x with Y, to fit on horizontal screen...
+		floor.add(new int[]{yy1,1040-xx1,yy2,1040-xx2}); // swap x with Y, to fit on horizontal screen...
 		// TODO change to give PROPER info to map, and map does the adaptation to the visualizer...
 		
 		
@@ -48,6 +48,7 @@ public class WGBParser {
 		double firstX,firstY,prevX,prevY;
 		firstX=firstY=prevX=prevY=0; // pleasing the compiler
 		int currentHeight = 0;
+		boolean doorway = false;
 		while(in.hasNext()) {			
 			s = in.next();
 			i++;
@@ -55,6 +56,8 @@ public class WGBParser {
 				if(s.equals("ROOM")) {
 					if(i!=6)
 						addSegment(currentHeight, prevX,prevY,firstX,firstY);
+					if(doorway)
+						doorway = false;
 					s=in.next(); //roomID
 					s=in.next(); //human name;
 					s=in.next(); //floor
@@ -71,19 +74,26 @@ public class WGBParser {
 				if(s.equals("-"))
 					continue;
 				
-				if(s.length()<4) // this means it's a room ID
+				if(s.length()<4) { // this means it's a room ID
+					doorway = true;
 					continue;
-				
+				}
 				double xval = Double.parseDouble(s);
 				s=in.next();
 				double yval = Double.parseDouble(s);
+				
+				if(!doorway)
 				addSegment(currentHeight, prevX,prevY,xval,yval);
+				else if(doorway)
+					doorway = false;
 				
 				prevX = xval;
 				prevY = yval;			
 			}		
 		}
-		addSegment(currentHeight, prevX,prevY,firstX,firstY);
+		
+			addSegment(currentHeight, prevX,prevY,firstX,firstY);
+
 		in.close();
 		}
 		catch(Exception e) {

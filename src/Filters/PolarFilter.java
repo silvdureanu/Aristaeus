@@ -14,7 +14,7 @@ public class PolarFilter implements Filter {
 	
 	public PolarFilter() {
 		particleSet = new ParticleSet<Particle>();
-		particleSet.seedParticles((Class)Particle.class, 1000000);
+		particleSet.seedParticles((Class)Particle.class, 1000);
 	}
 	
 	static int bsearch(double value, double[] v) {  // returns min(i) s.t. v[i]>=value
@@ -55,7 +55,7 @@ public class PolarFilter implements Filter {
 			double newH = ((int)p.getH()+dh)%360;			
 			double newX = p.getX() + dm * Math.cos(Math.toRadians(newH));
 			double newY = p.getY()- dm * Math.sin(Math.toRadians(newH)); // Y coordinates start at the top, so need to invert
-			double newP;
+			double newP = 0;
 			if(Main.map.outsideBounds(newX,newY))
 				newP = 0;
 			
@@ -68,12 +68,18 @@ public class PolarFilter implements Filter {
 			totalWeight += newP;
 		}
 
+		if(totalWeight==0) {   //fix division by zero......
+			particleSet.setParticles(newParticles);
+			return;
+		}
 		
 		double sumSoFar[] = new double[particles.size()];
 		sumSoFar[0] = particles.get(0).getP() / totalWeight;
 		
 		for(int i=2; i<particles.size(); i++) 
 			sumSoFar[i] = sumSoFar[i-1]+ particles.get(i).getP()/totalWeight;
+		
+	
 		
 		for (int i=0; i<particles.size(); i++) {
 			double rand = randomSeed.nextDouble();

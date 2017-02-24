@@ -188,6 +188,11 @@ public class BasicSkeletonFilter implements Filter {
 			
 		}
 		
+		if(totalWeight==0) {   //fix division by zero......
+			particleSet.setParticles(newParticles);
+			return;
+		}	
+		
 		double sumSoFar[] = new double[particles.size()];
 		sumSoFar[0] = particles.get(0).getProb() / totalWeight;
 		

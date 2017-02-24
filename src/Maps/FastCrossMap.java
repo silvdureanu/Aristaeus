@@ -34,8 +34,8 @@ public class FastCrossMap implements Map {
 		{100,100,100,830},{100,830,300,830},{300,830,300,870},{300,870,100,870},{100,870,100,900},{100,900,400,900},{400,900,400,100},{400,100,100,100}		
 	};
 	
-	//static int[][] segments = trapDonut;
-	static int[][] segments = WGBParser.getSegs(0);
+	static int[][] segments = trapDonut;
+	//static int[][] segments = WGBParser.getSegs(0);
 	
 	
 	public void setUpMap() {
