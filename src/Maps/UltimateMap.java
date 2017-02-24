@@ -17,7 +17,7 @@ import Particles.Particle;
 import core.Main;
 
 
-public class FastCrossMap implements Map {
+public class UltimateMap implements Map {
 	
 	private  MultiLineString map;
 	private  GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel());
@@ -34,7 +34,6 @@ public class FastCrossMap implements Map {
 		{100,100,100,830},{100,830,300,830},{300,830,300,870},{300,870,100,870},{100,870,100,900},{100,900,400,900},{400,900,400,100},{400,100,100,100}		
 	};
 	
-	//static int[][] segments = trapDonut;
 	static int[][] segments = WGBParser.getSegs(0);
 	
 	
@@ -48,10 +47,10 @@ public class FastCrossMap implements Map {
 			points[i] = geometryFactory.createLineString(coords);
 		}		
 		map = geometryFactory.createMultiLineString(points);	
-		gridIntersector = new GridIntersector(30,30,1500,1500,segments);
+		gridIntersector = new GridIntersector(30,30,1000,500,segments);
 	}
 	
-	public FastCrossMap() {
+	public UltimateMap() {
 		setUpMap();
 	}
 	

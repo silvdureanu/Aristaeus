@@ -58,7 +58,7 @@ public class Visualiser {
         frame.add(thingsToDraw);        
         Timer timer = new Timer(1000/600,new Redraw());
         timer.start();
-        frame.setSize(1280, 1024);
+        frame.setSize(1920, 1080);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }

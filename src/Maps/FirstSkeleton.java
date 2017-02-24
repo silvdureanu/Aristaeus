@@ -38,8 +38,8 @@ public class FirstSkeleton implements SkeletonMap {
 	
 	static Bone[] bones = new Bone[skeleton.length];
 	
-	static int[][] segments = trapDonut;
-	
+	//static int[][] segments = trapDonut;
+	static int[][] segments = WGBParser.getSegs(0);
 	
 	public void setUpMap() {
 		LineString[] points = new LineString[segments.length];

@@ -29,7 +29,7 @@ public class ParticleSet<ParticleType> {
 			Random randomSeed = new Random();
 			while(nrSeeded<nr) {
 				int xCoord = randomSeed.nextInt(1000);
-				int yCoord = randomSeed.nextInt(500);
+				int yCoord = randomSeed.nextInt(1000);
 				int hDir = randomSeed.nextInt(361);
 				
 				try{

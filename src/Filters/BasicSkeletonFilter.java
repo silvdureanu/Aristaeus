@@ -17,7 +17,7 @@ public class BasicSkeletonFilter implements Filter {
 	
 	public BasicSkeletonFilter() {
 		particleSet = new ParticleSet<SkeletonParticle>();
-		particleSet.seedParticles((Class)SkeletonParticle.class, 500);		
+		particleSet.seedParticles((Class)SkeletonParticle.class,1000);		
 	}
 	
 	static int bsearch(double value, double[] v) {  // returns min(i) s.t. v[i]>=value
@@ -132,7 +132,6 @@ public class BasicSkeletonFilter implements Filter {
 					dir = next.getNextDir();
 					
 					int d = dir ==prevDir ? 1:-1;
-					System.out.println(dir);
 					
 					Point2D secondVector = new Point2D.Double(d*(bone.getSecondPoint().getX()-bone.getFirstPoint().getX()),
 							d*(bone.getSecondPoint().getY()-bone.getFirstPoint().getY()));
