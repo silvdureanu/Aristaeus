@@ -39,6 +39,36 @@ public class GridIntersector {
 			}	
 	}
 	
+	
+	
+	
+	public GridIntersector(int x, int y,int maxx,int maxy,double[][] segs) {
+		nrx = x;
+		nry = y;
+		mx = maxx;
+		my = maxy;
+		cellwidth = (double)mx / nrx;
+		cellheight = (double)my / nry;
+		
+		gridSegments = new ArrayList[nrx][nry];
+		grid = new Rectangle2D[nrx][nry];		
+
+		//build set of lines intersecting each cell
+		for(int i = 0; i<nrx; i++)
+			for(int j=0; j<nry; j++) {
+				grid[i][j] = new Rectangle2D.Double(i*cellwidth,j*cellheight,cellwidth,cellheight);
+				gridSegments[i][j] = new ArrayList<Line2D>();
+				
+				for(int l=0; l<segs.length; l++) {
+					Line2D cl = new Line2D.Double(segs[l][1],segs[l][0],segs[l][3],segs[l][2]);
+					if(grid[i][j].intersectsLine(cl)) {
+							gridSegments[i][j].add(cl);
+					}
+				}
+				
+			}	
+	}
+	
 	public boolean crossesWall(double x1, double y1, double x2, double y2) {
 		Line2D line = new Line2D.Double(x1,y1,x2,y2);
 		

@@ -35,7 +35,6 @@ public class FastCrossMap implements Map {
 	};
 	
 	static int[][] segments = trapDonut;
-	//static int[][] segments = WGBParser.getSegs(0);
 	
 	
 	public void setUpMap() {

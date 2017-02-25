@@ -8,13 +8,13 @@ import java.util.Scanner;
 public class WGBParser {
 	
 	
-	static List<int[]> groundFloor = new ArrayList<int[]>();
-	static List<int[]> firstFloor = new ArrayList<int[]>();
-	static List<int[]> secondFloor = new ArrayList<int[]>();
+	static List<double[]> groundFloor = new ArrayList<double[]>();
+	static List<double[]> firstFloor = new ArrayList<double[]>();
+	static List<double[]> secondFloor = new ArrayList<double[]>();
 	
 	
 	static void addSegment(int h, double x1, double y1, double x2, double y2) {
-		List<int[]> floor;
+		List<double[]> floor;
 		if(h==0)
 			floor=groundFloor;
 		else if(h==1)
@@ -33,7 +33,7 @@ public class WGBParser {
 		int yy2=(int)y2;
 		
 		
-		floor.add(new int[]{yy1,1040-xx1,yy2,1040-xx2}); // swap x with Y, to fit on horizontal screen...
+		floor.add(new double[]{y1,1040-x1,y2,1040-x2}); // swap x with Y, to fit on horizontal screen...
 		// TODO change to give PROPER info to map, and map does the adaptation to the visualizer...
 		
 		
@@ -101,8 +101,8 @@ public class WGBParser {
 		}
 	}
 
-	public static int[][] getSegs(int level) {
-		List<int[]> floor;
+	public static double[][] getSegs(int level) {
+		List<double[]> floor;
 		if(level==0)
 			floor=groundFloor;
 		else if(level==1)
@@ -110,7 +110,7 @@ public class WGBParser {
 		else
 			floor=secondFloor;		
 		
-		int[][] v = new int[floor.size()][4];		
+		double[][] v = new double[floor.size()][4];		
 		for(int i=0; i<floor.size(); i++) {
 			v[i] = floor.get(i);
 		}

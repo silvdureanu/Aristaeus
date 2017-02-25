@@ -14,7 +14,7 @@ public class PolarFilter implements Filter {
 	
 	public PolarFilter() {
 		particleSet = new ParticleSet<Particle>();
-		particleSet.seedParticles((Class)Particle.class, 1000);
+		particleSet.seedParticles((Class)Particle.class, 500000);
 	}
 	
 	static int bsearch(double value, double[] v) {  // returns min(i) s.t. v[i]>=value

@@ -1,30 +1,25 @@
 package core;
 
-import Filters.BasicSkeletonFilter;
-import Filters.PolarFilter;
+import Filters.*;
 import Inputs.Input;
-import Inputs.StraightInput;
-import Maps.FastCrossMap;
-import Maps.FirstSkeleton;
-import Maps.Map;
-import Maps.SkeletonMap;
-import Maps.WGBParser;
+import Inputs.*;
+import Maps.*;
 
 
 public class Main {
 	static public WGBParser wgb = new WGBParser();
-	static public Map map =  new FastCrossMap();
+	static public Map map =  new UltimateMap();
 	static public SkeletonMap skeleMap = new FirstSkeleton();
 	static public PolarFilter filter = new PolarFilter();	
 	static public BasicSkeletonFilter skeleFilter = new BasicSkeletonFilter();
-	static public Input inputGenerator = new StraightInput();
+	static public Input inputGenerator = new PolarInput();
 
 	public static void main(String[] args) {	
 
 		new Visualiser(map).visualise();
 		while(inputGenerator.hasInputs()) {
-			try{Thread.sleep(2000);}
-			catch(Exception e){};
+			//try{Thread.sleep(800);}
+			//catch(Exception e){};
 			filter.performStep();			
 		}		
 	}
