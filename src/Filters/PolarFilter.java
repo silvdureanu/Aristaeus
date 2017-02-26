@@ -14,7 +14,7 @@ public class PolarFilter implements Filter {
 	
 	public PolarFilter() {
 		particleSet = new ParticleSet<Particle>();
-		particleSet.seedParticles((Class)Particle.class, 500000);
+		particleSet.seedParticles((Class)Particle.class, 1000000);
 	}
 	
 	static int bsearch(double value, double[] v) {  // returns min(i) s.t. v[i]>=value
@@ -49,8 +49,8 @@ public class PolarFilter implements Filter {
 		for(Particle p: particles) {
 			double gauss1 = randomSeed.nextGaussian();	
 			double gauss2 = randomSeed.nextGaussian();
-			double dm = movement[0]+ gauss1 * 5;
-			double dh=movement[1] + gauss2 * 4;
+			double dm = movement[0]+ gauss1 * 0.1;
+			double dh=movement[1] + gauss2 * 2.42;
 			
 			double newH = ((int)p.getH()+dh)%360;			
 			double newX = p.getX() + dm * Math.cos(Math.toRadians(newH));

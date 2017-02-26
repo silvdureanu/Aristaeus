@@ -22,18 +22,15 @@ public class WGBParser {
 		else
 			floor=secondFloor;
 		
-		x1*=13; //scale for display size and precision when truncating to int
+		/*x1*=13; //scale for display size and precision when truncating to int
 		x2*=13;
 		y1*=13;
-		y2*=13;
+		y2*=13;*/
 		
-		int xx1 = (int)x1; // turn into int for display on pixels
-		int xx2=(int)x2;
-		int yy1=(int)y1;
-		int yy2=(int)y2;
+
 		
 		
-		floor.add(new double[]{y1,1040-x1,y2,1040-x2}); // swap x with Y, to fit on horizontal screen...
+		floor.add(new double[]{80-x1,y1,80-x2,y2}); // swap x with Y, to fit on horizontal screen...
 		// TODO change to give PROPER info to map, and map does the adaptation to the visualizer...
 		
 		

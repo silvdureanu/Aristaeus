@@ -12,13 +12,13 @@ public class Main {
 	static public SkeletonMap skeleMap = new FirstSkeleton();
 	static public PolarFilter filter = new PolarFilter();	
 	static public BasicSkeletonFilter skeleFilter = new BasicSkeletonFilter();
-	static public Input inputGenerator = new PolarInput();
+	static public Input inputGenerator = new StraightInput();
 
 	public static void main(String[] args) {	
 
 		new Visualiser(map).visualise();
 		while(inputGenerator.hasInputs()) {
-			//try{Thread.sleep(800);}
+			//try{Thread.sleep(1000);}
 			//catch(Exception e){};
 			filter.performStep();			
 		}		

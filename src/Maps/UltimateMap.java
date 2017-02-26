@@ -19,36 +19,45 @@ import core.Main;
 
 public class UltimateMap implements Map {
 	
+	double screenFactor = 14;
 	private  MultiLineString map;
+	private MultiLineString visMap;
 	private  GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel());
 	private  ShapeWriter shapeWriter = new ShapeWriter();
 	private  Point realLocation = geometryFactory.createPoint(new Coordinate(10,10));	
 	private GridIntersector gridIntersector;
-	static int[][] basicDonut = new int[][]{
+	static double[][] basicDonut = new double[][]{
 		{5,5,5,995},{5,995,495,995},{495,995,495,5},{495,5,5,5},
 		{100,100,100,900},{100,900,400,900},{400,900,400,100},{400,100,100,100}
 	};
 	
-	static int[][] trapDonut= new int[][] {
+	static double[][] trapDonut= new double[][] {
 		{5,5,5,995},{5,995,495,995},{495,995,495,5},{495,5,5,5},
 		{100,100,100,830},{100,830,300,830},{300,830,300,870},{300,870,100,870},{100,870,100,900},{100,900,400,900},{400,900,400,100},{400,100,100,100}		
 	};
 	
-	//static int[][] segments = trapDonut;
+	//static double[][] segments = basicDonut;
 	static double[][] segments = WGBParser.getSegs(0);
 	
 	
 	public void setUpMap() {
 		LineString[] points = new LineString[segments.length];
+		LineString[] interPoints = new LineString[segments.length];
 		for(int i=0; i<segments.length; i++) {
-			Coordinate[] coords = new Coordinate[2];
-			coords[0] = new Coordinate(segments[i][1],segments[i][0]);
-			coords[1] = new Coordinate(segments[i][3],segments[i][2]);
+			Coordinate[] visCoords = new Coordinate[2];
+			visCoords[0] = new Coordinate(screenFactor*segments[i][0],screenFactor*segments[i][1]);
+			visCoords[1] = new Coordinate(screenFactor*segments[i][2],screenFactor*segments[i][3]);
+			
+			Coordinate[] interCoords = new Coordinate[2];
+			interCoords[0] = new Coordinate(segments[i][0],segments[i][1]);
+			interCoords[1] = new Coordinate(segments[i][2],segments[i][3]);			
 			//TODO fix this
-			points[i] = geometryFactory.createLineString(coords);
+			points[i] = geometryFactory.createLineString(visCoords);
+			interPoints[i]=geometryFactory.createLineString(interCoords);
 		}		
-		map = geometryFactory.createMultiLineString(points);	
-		gridIntersector = new GridIntersector(30,30,1500,1500,segments);
+		map = geometryFactory.createMultiLineString(points);
+		visMap = geometryFactory.createMultiLineString(interPoints);
+		gridIntersector = new GridIntersector(50,50,90,90,segments);
 	}
 	
 	public UltimateMap() {
@@ -60,8 +69,11 @@ public class UltimateMap implements Map {
 	}
 	
 	public  boolean outsideBounds(double newX, double newY) {
-		Geometry envelope = map.getEnvelope();
+
+		
+		Geometry envelope = visMap.getEnvelope();
 		return !envelope.covers(geometryFactory.createPoint(new Coordinate(newX,newY)));
+
 	}
 	
 	public  Shape getWalls() {
@@ -79,7 +91,7 @@ public class UltimateMap implements Map {
 		Point[] pointList = new Point[particleList.size()];		
 		int i=0;		
 		for(Particle p: particleList) {
-			pointList[i] = geometryFactory.createPoint(new Coordinate(p.getX(),p.getY()));
+			pointList[i] = geometryFactory.createPoint(new Coordinate(screenFactor*p.getX(),screenFactor*p.getY()));
 			i++;
 		}		
 		particles = geometryFactory.createMultiPoint(pointList);

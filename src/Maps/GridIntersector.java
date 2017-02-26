@@ -60,7 +60,7 @@ public class GridIntersector {
 				gridSegments[i][j] = new ArrayList<Line2D>();
 				
 				for(int l=0; l<segs.length; l++) {
-					Line2D cl = new Line2D.Double(segs[l][1],segs[l][0],segs[l][3],segs[l][2]);
+					Line2D cl = new Line2D.Double(segs[l][0],segs[l][1],segs[l][2],segs[l][3]);
 					if(grid[i][j].intersectsLine(cl)) {
 							gridSegments[i][j].add(cl);
 					}
