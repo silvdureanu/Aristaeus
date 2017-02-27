@@ -36,12 +36,12 @@ public class StraightInput implements Input {
 	
 	
 	public  double[] generateStepInput() {
-			nr--;
 			dx = randomSeed.nextGaussian() * 0.1;
 			da = randomSeed.nextGaussian()* 0.1;
 			double[] v = {dx,da};
 			v[0]+=inputs[inputs.length-nr][0];
 			v[1]+=inputs[inputs.length-nr][1];
+			nr--;
 			return v;
 	};
 	

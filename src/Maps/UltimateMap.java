@@ -19,7 +19,7 @@ import core.Main;
 
 public class UltimateMap implements Map {
 	
-	double screenFactor = 14;
+	double screenFactor = 13;
 	private  MultiLineString map;
 	private MultiLineString visMap;
 	private  GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel());
@@ -51,13 +51,12 @@ public class UltimateMap implements Map {
 			Coordinate[] interCoords = new Coordinate[2];
 			interCoords[0] = new Coordinate(segments[i][0],segments[i][1]);
 			interCoords[1] = new Coordinate(segments[i][2],segments[i][3]);			
-			//TODO fix this
 			points[i] = geometryFactory.createLineString(visCoords);
 			interPoints[i]=geometryFactory.createLineString(interCoords);
 		}		
 		map = geometryFactory.createMultiLineString(points);
 		visMap = geometryFactory.createMultiLineString(interPoints);
-		gridIntersector = new GridIntersector(50,50,90,90,segments);
+		gridIntersector = new GridIntersector(80,80,90,90,segments);
 	}
 	
 	public UltimateMap() {

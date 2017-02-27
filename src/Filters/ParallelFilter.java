@@ -8,11 +8,11 @@ import Particles.Particle;
 import Particles.ParticleSet;
 import core.Main;
 
-public class PolarFilter implements Filter {
+public class ParallelFilter implements Filter {
 	
 	private ParticleSet<Particle> particleSet ;
 	
-	public PolarFilter() {
+	public ParallelFilter() {
 		particleSet = new ParticleSet<Particle>();
 		particleSet.seedParticles((Class)Particle.class, 100000);
 	}
@@ -47,7 +47,32 @@ public class PolarFilter implements Filter {
 		double totalWeight = 0;
 		
 		
-		for(Particle p: particles) {
+		particles.parallelStream().forEach((p) -> {
+			
+			double gauss1 = randomSeed.nextGaussian();	
+			double gauss2 = randomSeed.nextGaussian();
+			double dm = movement[0]+ gauss1 * 0.1;
+			double dh=movement[1] + gauss2 * 2.42;
+			
+			double newH = ((int)p.getH()+dh)%360;			
+			double newX = p.getX() + dm * Math.cos(Math.toRadians(newH));
+			double newY = p.getY()- dm * Math.sin(Math.toRadians(newH)); // Y coordinates start at the top, so need to invert
+			double newP = 0;
+			if(Main.map.outsideBounds(newX,newY))
+				newP = 0;
+			
+			
+			else newP = Main.map.crossesWall(p, newX, newY) ? 0 : 1;
+
+			p.setX(newX);
+			p.setY(newY);
+			p.setP(newP);	
+			p.setH(newH);
+			//totalWeight += newP;				
+		});
+		
+		totalWeight = particles.stream().mapToDouble(p-> p.getP()).sum();
+		/*for(Particle p: particles) {
 			double gauss1 = randomSeed.nextGaussian();	
 			double gauss2 = randomSeed.nextGaussian();
 			double dm = movement[0]+ gauss1 * 0.1;
@@ -67,7 +92,7 @@ public class PolarFilter implements Filter {
 			p.setP(newP);	
 			p.setH(newH);
 			totalWeight += newP;
-		}
+		}*/
 
 		if(totalWeight==0) {   //fix division by zero......
 			particleSet.setParticles(newParticles);

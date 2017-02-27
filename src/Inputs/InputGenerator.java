@@ -9,7 +9,7 @@ public class InputGenerator implements Input {
 	 private int nr = inputs.length;
 	
 	public  boolean hasInputs() {
-		return (nr>0);
+		return (nr>1);
 	}
 	
 	
