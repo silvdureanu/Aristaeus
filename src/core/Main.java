@@ -23,7 +23,7 @@ public class Main {
 		
 		new Visualiser(skeleMap).visualise();
 			while(inputGenerator.hasInputs()) {	
-				try{Thread.sleep(1000);}
+				try{Thread.sleep(100);}
 				catch(Exception e){};
 				skeleFilter.performStep();		
 			}	

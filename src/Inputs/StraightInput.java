@@ -42,8 +42,8 @@ public class StraightInput implements Input {
 			v[0]+=inputs[inputs.length-nr][0];
 			v[1]+=inputs[inputs.length-nr][1];
 			nr--;
-			v[0]*=10;
-			v[1]*=10;
+			//v[0]*=10;
+			//v[1]*=10;
 			return v;
 	};
 	
@@ -51,8 +51,8 @@ public class StraightInput implements Input {
 		double[] v = {dx,da};
 		v[0]+=inputs[inputs.length-nr][0];
 		v[1]+=inputs[inputs.length-nr][1];
-		v[0]*=10;
-		v[1]*=10;
+		//v[0]*=10;
+		//v[1]*=10;
 		return v;
 	}
 	

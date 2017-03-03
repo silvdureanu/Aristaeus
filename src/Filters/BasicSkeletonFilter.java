@@ -61,7 +61,7 @@ public class BasicSkeletonFilter implements Filter {
 	public void performStep() {
 		List<SkeletonParticle> particles = particleSet.getParticles();
 		List<SkeletonParticle> newParticles = new ArrayList<SkeletonParticle>();
-		double epiphysize = 7; // depending on domain; Should probably be 1-1.5 avg "steps"?
+		double epiphysize = 0.7; // depending on domain; Should probably be 1-1.5 avg "steps"?
 		
 		Random randomSeed = new Random();
 		double[] movement = Main.inputGenerator.generateStepInput();
@@ -69,7 +69,7 @@ public class BasicSkeletonFilter implements Filter {
 		for(SkeletonParticle p: particles) {
 			double gauss1 = randomSeed.nextGaussian();	
 			double gauss2 = randomSeed.nextGaussian();
-			double dm = movement[0]+ gauss1 * 0.25;
+			double dm = movement[0]+ gauss1 * 0.025;
 			double dh=movement[1] + gauss2 * 2;
 			boolean hoisted = false;
 			double newP = 0;
