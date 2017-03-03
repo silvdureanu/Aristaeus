@@ -82,4 +82,14 @@ public class Bone {
 		return secondConnections.get(0);
 	}
 	
+	public Boolean hasNextFirst() {
+		return firstConnections.size()!=0;
+	}
+	
+	
+	public Boolean hasNextSecond() {
+		return secondConnections.size()!=0;
+	}
+		
+	
 }

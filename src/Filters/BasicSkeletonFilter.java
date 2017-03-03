@@ -17,7 +17,7 @@ public class BasicSkeletonFilter implements Filter {
 	
 	public BasicSkeletonFilter() {
 		particleSet = new ParticleSet<SkeletonParticle>();
-		particleSet.seedParticles((Class)SkeletonParticle.class,10000);		
+		particleSet.seedParticles((Class)SkeletonParticle.class,100000);		
 	}
 	
 	static int bsearch(double value, double[] v) {  // returns min(i) s.t. v[i]>=value
@@ -79,7 +79,7 @@ public class BasicSkeletonFilter implements Filter {
 			int dir = p.getDir();
 			
 			//TODO - hoist probability exponential instead of linear?			
-			if(bone.getLen() - p.getDist()*bone.getLen()<= epiphysize && dir==1) { // hoist at end of bone
+			if(bone.getLen() - p.getDist()*bone.getLen()<= epiphysize && dir==1 &&bone.hasNextSecond()) { // hoist at end of bone
 				double pHoistInv = (bone.getLen() - p.getDist()*bone.getLen()) / epiphysize; // inverse, for easy calc 
 				if(randomSeed.nextDouble()>=pHoistInv) {
 					hoisted = true;
@@ -98,7 +98,7 @@ public class BasicSkeletonFilter implements Filter {
 					Point2D secondVector = new Point2D.Double(d*(nextBone.getSecondPoint().getX()-nextBone.getFirstPoint().getX()),
 							d*(nextBone.getSecondPoint().getY()-nextBone.getFirstPoint().getY()));
 					
-					double angle = Math.acos(dotProd(firstVector,secondVector)/ firstVector.distance(0, 0) / firstVector.distance(0, 0));
+					double angle = Math.acos(dotProd(firstVector,secondVector)/ firstVector.distance(0, 0) / secondVector.distance(0, 0));
 					int direction = crossProd(firstVector,secondVector) > 0 ? -1: 1; // inversion due to Y starting up
 					
 					//System.out.print(firstVector);
@@ -121,7 +121,7 @@ public class BasicSkeletonFilter implements Filter {
 				}
 			}
 			
-			if(bone.getLen() * p.getDist() <=epiphysize && dir==2) { // hoist at start of bone
+			if(bone.getLen() * p.getDist() <=epiphysize && dir==2&&bone.hasNextFirst()) { // hoist at start of bone
 				double pHoistInv = (bone.getLen() * p.getDist()) / epiphysize;
 				if(randomSeed.nextDouble()>=pHoistInv) {
 					hoisted = true;
@@ -139,8 +139,9 @@ public class BasicSkeletonFilter implements Filter {
 					Point2D firstVector = new Point2D.Double(nextBone.getSecondPoint().getX()-nextBone.getFirstPoint().getX(),
 							nextBone.getSecondPoint().getY()-nextBone.getFirstPoint().getY());
 					
-					double angle = Math.acos(dotProd(firstVector,secondVector)/ firstVector.distance(0, 0) / firstVector.distance(0, 0));
-					
+					double angle = Math.acos(dotProd(firstVector,secondVector)/ firstVector.distance(0, 0) / secondVector.distance(0, 0));
+
+						
 					// must do cross prod in terms of directions, not absolute vals
 					int direction = crossProd(firstVector,secondVector) > 0 ? -1: 1; // inversion due to Y starting up
 					angle *= direction; // to have full trig circle			

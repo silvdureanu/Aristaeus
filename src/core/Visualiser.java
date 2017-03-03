@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -55,6 +57,18 @@ public class Visualiser {
     
     public  void animate(){
         JFrame frame = new JFrame();
+        
+        
+        frame.addMouseListener(new MouseAdapter() {
+        	@Override
+        	public void mousePressed(MouseEvent e) {
+        		System.out.print(e.getX());
+        		System.out.print(' ');
+        		System.out.println(e.getY());
+        	}
+        	
+        	
+        });
         frame.add(thingsToDraw);        
         Timer timer = new Timer(1000/600,new Redraw());
         timer.start();
