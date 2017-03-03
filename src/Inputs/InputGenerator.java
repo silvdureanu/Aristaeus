@@ -22,4 +22,11 @@ public class InputGenerator implements Input {
 		return inputs[inputs.length-nr];
 	}
 	
+	public double[] generateRealInput() {
+		double[] v = {0,0};
+		v[0]+=inputs[inputs.length-nr][0];
+		v[1]+=inputs[inputs.length-nr][1];
+		return v;
+	}	
+	
 }

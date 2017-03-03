@@ -63,7 +63,13 @@ public class Bone {
 			else System.out.println("Error finding target joint from second point");
 		}
 		
-		else System.out.println("Error finding source joint");
+		else{
+			System.out.println("Error finding source joint");
+			System.out.println(this.getFirstPoint());
+			System.out.println(this.getSecondPoint());
+			System.out.println(x);
+			System.out.println(y);
+		}
 		
 	}
 	

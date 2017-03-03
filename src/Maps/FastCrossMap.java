@@ -50,6 +50,8 @@ public class FastCrossMap implements Map {
 		gridIntersector = new GridIntersector(30,30,1500,1500,segments);
 	}
 	
+	public void updateRealLocation(){}
+	
 	public FastCrossMap() {
 		setUpMap();
 	}

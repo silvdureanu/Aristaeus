@@ -17,7 +17,7 @@ public class BasicSkeletonFilter implements Filter {
 	
 	public BasicSkeletonFilter() {
 		particleSet = new ParticleSet<SkeletonParticle>();
-		particleSet.seedParticles((Class)SkeletonParticle.class,1000);		
+		particleSet.seedParticles((Class)SkeletonParticle.class,10000);		
 	}
 	
 	static int bsearch(double value, double[] v) {  // returns min(i) s.t. v[i]>=value
@@ -61,7 +61,7 @@ public class BasicSkeletonFilter implements Filter {
 	public void performStep() {
 		List<SkeletonParticle> particles = particleSet.getParticles();
 		List<SkeletonParticle> newParticles = new ArrayList<SkeletonParticle>();
-		double epiphysize = 100; // depending on domain; Should probably be 1-1.5 avg "steps"?
+		double epiphysize = 7; // depending on domain; Should probably be 1-1.5 avg "steps"?
 		
 		Random randomSeed = new Random();
 		double[] movement = Main.inputGenerator.generateStepInput();
@@ -69,8 +69,8 @@ public class BasicSkeletonFilter implements Filter {
 		for(SkeletonParticle p: particles) {
 			double gauss1 = randomSeed.nextGaussian();	
 			double gauss2 = randomSeed.nextGaussian();
-			double dm = movement[0]+ gauss1 * 5;
-			double dh=movement[1] + gauss2 * 4;
+			double dm = movement[0]+ gauss1 * 0.25;
+			double dh=movement[1] + gauss2 * 2;
 			boolean hoisted = false;
 			double newP = 0;
 			
@@ -145,7 +145,7 @@ public class BasicSkeletonFilter implements Filter {
 					int direction = crossProd(firstVector,secondVector) > 0 ? -1: 1; // inversion due to Y starting up
 					angle *= direction; // to have full trig circle			
 					
-					newP = -1*Math.cos(Math.abs(angle - Math.toRadians(dh) ));		//NO idea why this works			
+					newP = -1*Math.cos(Math.abs(angle - Math.toRadians(dh) ));		//NO idea why this works	
 					
 					if(newP<0.05)
 						newP = 0;
@@ -173,11 +173,14 @@ public class BasicSkeletonFilter implements Filter {
 				else
 					dist-=findist;
 				
-				if(dist>1 || dist<0)
+				if(dist>1 || dist<0) {
+					newP = 0;
+					dist =0; // cosmetic, prevents "tails" appearing at animation step
+				}
+				
+				if(newP<0.2)
 					newP = 0;
 				
-				if(newP<0.1)
-					newP = 0;
 				
 			}				
 			p.setSeg(bone);
@@ -187,7 +190,6 @@ public class BasicSkeletonFilter implements Filter {
 			totalWeight += newP;
 			
 		}
-		
 		if(totalWeight==0) {   //fix division by zero......
 			particleSet.setParticles(newParticles);
 			return;
@@ -205,7 +207,7 @@ public class BasicSkeletonFilter implements Filter {
 			SkeletonParticle p = particles.get(dex);
 			newParticles.add(new SkeletonParticle(p.getSeg(),p.getDist(),p.getDir(), p.getProb()));				
 		}
-		
+		Main.map.updateRealLocation();
 		particleSet.setParticles(newParticles); 		
 	}
 	public List<SkeletonParticle> getParticles() {

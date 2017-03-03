@@ -89,6 +89,7 @@ public class PolarFilter implements Filter {
 			newParticles.add(new Particle(p.getX(),p.getY(),p.getH()));				
 		}
 		
+		Main.map.updateRealLocation();
 		particleSet.setParticles(newParticles); 		
 	}
 	public List<Particle> getParticles() {

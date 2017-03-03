@@ -13,54 +13,85 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
-import Inputs.PolarInput;
 import Particles.Particle;
+import Particles.SkeletonParticle;
 import core.Main;
 
 
-public class UltimateMap implements Map {
+public class UltimateSkeleton implements SkeletonMap {
 	
 	double screenFactor = 13;
 	private  MultiLineString map;
-	private MultiLineString visMap;
 	private  GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel());
 	private  ShapeWriter shapeWriter = new ShapeWriter();
 	private  Point realLocation;
 	private GridIntersector gridIntersector;
 	static double[][] basicDonut = new double[][]{
+		{5,5,5,99},{5,99,49,99},{49,99,49,5},{49,5,5,5},
+		{10,10,10,90},{10,90,40,90},{40,90,40,10},{40,10,10,10}
+	};
+	/*static double[][] basicDonut = new double[][]{
 		{5,5,5,995},{5,995,495,995},{495,995,495,5},{495,5,5,5},
 		{100,100,100,900},{100,900,400,900},{400,900,400,100},{400,100,100,100}
+	};*/
+	
+
+	static double[][] skeleton = new double[][] {
+		{7,7,95,7},{95,7,95,45},{95,45,7,45},{7,45,7,7}
 	};
 	
-	static double[][] trapDonut= new double[][] {
-		{5,5,5,995},{5,995,495,995},{495,995,495,5},{495,5,5,5},
-		{100,100,100,830},{100,830,300,830},{300,830,300,870},{300,870,100,870},{100,870,100,900},{100,900,400,900},{400,900,400,100},{400,100,100,100}		
-	};
+	/*static int[][] skeleton = new int[][] {
+		{50,50,950,50},{950,50,950,450},{950,450,50,450},{50,450,50,50}
+	};*/
 	
-	//static double[][] segments = basicDonut;
-	static double[][] segments = WGBParser.getSegs(0);
+	static Bone[] bones = new Bone[skeleton.length];
+	
+	static double[][] segments = basicDonut;
+	//static double[][] segments = WGBParser.getSegs(0);
 	
 	
 	public void setUpMap() {
 		LineString[] points = new LineString[segments.length];
-		LineString[] interPoints = new LineString[segments.length];
 		for(int i=0; i<segments.length; i++) {
 			Coordinate[] visCoords = new Coordinate[2];
-			visCoords[0] = new Coordinate(screenFactor*segments[i][0],screenFactor*segments[i][1]);
-			visCoords[1] = new Coordinate(screenFactor*segments[i][2],screenFactor*segments[i][3]);
-			
-			Coordinate[] interCoords = new Coordinate[2];
-			interCoords[0] = new Coordinate(segments[i][0],segments[i][1]);
-			interCoords[1] = new Coordinate(segments[i][2],segments[i][3]);			
+			visCoords[0] = new Coordinate(screenFactor*segments[i][1],screenFactor*segments[i][0]);
+			visCoords[1] = new Coordinate(screenFactor*segments[i][3],screenFactor*segments[i][2]);			
+
 			points[i] = geometryFactory.createLineString(visCoords);
-			interPoints[i]=geometryFactory.createLineString(interCoords);
 		}		
 		map = geometryFactory.createMultiLineString(points);
-		visMap = geometryFactory.createMultiLineString(interPoints);
-		gridIntersector = new GridIntersector(80,80,90,90,segments);
+		
+		for(int i=0; i<skeleton.length; i++) 
+			bones[i] = new Bone(skeleton[i][0],skeleton[i][1],skeleton[i][2],skeleton[i][3]);
+		
+		
+		bones[0].addConnection(95, 7, bones[1]);
+		bones[0].addConnection(7, 7, bones[3]);
+		
+			
+		bones[1].addConnection(95, 45, bones[2]);
+		bones[1].addConnection(95, 7, bones[0]);
+			
+		bones[2].addConnection(7, 45, bones[3]);
+		bones[2].addConnection(95,45,bones[1]);
+			
+		bones[3].addConnection(7, 7, bones[0]);
+		bones[3].addConnection(7, 45, bones[2]);
+		
+		/*bones[0].addConnection(950, 50, bones[1]);		
+		bones[0].addConnection(50, 50, bones[3]);
+			
+		bones[1].addConnection(950, 450, bones[2]);
+		bones[1].addConnection(950, 50, bones[0]);
+			
+		bones[2].addConnection(50, 450, bones[3]);
+		bones[2].addConnection(950,450,bones[1]);
+			
+		bones[3].addConnection(50, 50, bones[0]);
+		bones[3].addConnection(50, 450, bones[2]);*/
 	}
 	
-	public UltimateMap(double initX, double initY) {
+	public UltimateSkeleton(double initX, double initY) {
 		realLocation = geometryFactory.createPoint(new Coordinate(screenFactor*initX,screenFactor*initY));	
 		setUpMap();
 	}
@@ -75,18 +106,10 @@ public class UltimateMap implements Map {
 		realLocation = geometryFactory.createPoint(new Coordinate(newX,newY));
 	}
 	
-	public boolean crossesWall(Particle p, double newX, double newY) {
-		return gridIntersector.crossesWall(p.getX(), p.getY(), newX, newY);	
+	public Bone[] getSkeleton() {
+		return bones;
 	}
-	
-	public boolean outsideBounds(double newX, double newY) {
 
-		
-		Geometry envelope = visMap.getEnvelope();
-		return !envelope.covers(geometryFactory.createPoint(new Coordinate(newX,newY)));
-
-	}
-	
 	public Shape getWalls() {
 		return shapeWriter.toShape(map);
 	}
@@ -95,13 +118,12 @@ public class UltimateMap implements Map {
 		return shapeWriter.toShape(realLocation);
 	}
 	
-	//TODO Make filters push updates to map - since there's just one map. 
 	public Shape getParticles() {
 		MultiPoint particles;		
-		List<Particle> particleList = Main.filter.getParticles();	
+		List<SkeletonParticle> particleList = Main.skeleFilter.getParticles();	
 		Point[] pointList = new Point[particleList.size()];		
 		int i=0;		
-		for(Particle p: particleList) {
+		for(SkeletonParticle p: particleList) {
 			pointList[i] = geometryFactory.createPoint(new Coordinate(screenFactor*p.getX(),screenFactor*p.getY()));
 			i++;
 		}		

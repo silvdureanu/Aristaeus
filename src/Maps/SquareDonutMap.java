@@ -47,6 +47,8 @@ public class SquareDonutMap implements Map {
 		map = geometryFactory.createMultiLineString(points);			
 	}
 	
+	public void updateRealLocation(){}
+	
 	public SquareDonutMap() {
 		setUpMap();
 	}

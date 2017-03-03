@@ -54,17 +54,18 @@ public class FirstSkeleton implements SkeletonMap {
 		
 		for(int i=0; i<skeleton.length; i++)
 			bones[i] = new Bone(skeleton[i][0],skeleton[i][1],skeleton[i][2],skeleton[i][3]);
-			bones[0].addConnection(950, 50, bones[1]);
-			bones[0].addConnection(50, 50, bones[3]);
+		
+		bones[0].addConnection(950, 50, bones[1]);
+		bones[0].addConnection(50, 50, bones[3]);
 			
-			bones[1].addConnection(950, 450, bones[2]);
-			bones[1].addConnection(950, 50, bones[0]);
+		bones[1].addConnection(950, 450, bones[2]);
+		bones[1].addConnection(950, 50, bones[0]);
 			
-			bones[2].addConnection(50, 450, bones[3]);
-			bones[2].addConnection(950,450,bones[1]);
+		bones[2].addConnection(50, 450, bones[3]);
+		bones[2].addConnection(950,450,bones[1]);
 			
-			bones[3].addConnection(50, 50, bones[0]);
-			bones[3].addConnection(50, 450, bones[2]);
+		bones[3].addConnection(50, 50, bones[0]);
+		bones[3].addConnection(50, 450, bones[2]);
 	}
 	
 	public FirstSkeleton() {

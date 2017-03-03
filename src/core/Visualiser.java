@@ -37,10 +37,10 @@ public class Visualiser {
         	super.paint(g);
             Graphics2D drawer = (Graphics2D)g;
             drawer.draw(walls);
-            drawer.setColor(Color.RED);
-            drawer.draw(realLocation);
             drawer.setColor(Color.BLUE);
             drawer.draw(particles);
+            drawer.setColor(Color.RED);
+            drawer.draw(realLocation);
         }        
 
         public void updateRealLocation() {
