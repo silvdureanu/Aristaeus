@@ -20,7 +20,7 @@ import core.Main;
 
 public class UltimateMap implements Map {
 	
-	double screenFactor = 13;
+	double screenFactor = 20;
 	private  MultiLineString map;
 	private MultiLineString visMap;
 	private  GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel());

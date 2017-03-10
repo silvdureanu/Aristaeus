@@ -51,7 +51,7 @@ public class PolarFilter implements Filter {
 			double gauss1 = randomSeed.nextGaussian();	
 			double gauss2 = randomSeed.nextGaussian();
 			double dm = movement[0]+ gauss1 * 0.1;
-			double dh=movement[1] + gauss2 * 2.42;
+			double dh=movement[1] + gauss2 * 1.5; // need to tune parameters
 			
 			double newH = ((int)p.getH()+dh)%360;			
 			double newX = p.getX() + dm * Math.cos(Math.toRadians(newH));
@@ -86,7 +86,7 @@ public class PolarFilter implements Filter {
 			double rand = randomSeed.nextDouble();
 			int dex = bsearch(rand,sumSoFar);
 			Particle p = particles.get(dex);
-			newParticles.add(new Particle(p.getX(),p.getY(),p.getH()));				
+			newParticles.add(new Particle(p.getX(),p.getY(),p.getH()));		//todo no new particles		
 		}
 		
 		Main.map.updateRealLocation();

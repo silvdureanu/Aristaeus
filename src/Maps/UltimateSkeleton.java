@@ -1,11 +1,13 @@
 package Maps;
 
 import java.awt.Shape;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.vividsolutions.jts.awt.ShapeWriter;
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -13,21 +15,18 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
-import Particles.Particle;
 import Particles.SkeletonParticle;
 import core.Main;
 
 
 public class UltimateSkeleton implements SkeletonMap {
 	
-	double screenFactor = 13;
+	double screenFactor = 20;
 	private  MultiLineString map;
 	private  GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel());
 	private  ShapeWriter shapeWriter = new ShapeWriter();
 	private  Point realLocation;
-	private GridIntersector gridIntersector;
-
-	
+	private GridIntersector gridIntersector;	
 
 	static double[][] skeleton = new double[][] {
 		{7.23,54.23,29.38,54.23},
@@ -46,10 +45,13 @@ public class UltimateSkeleton implements SkeletonMap {
 	};
 
 	
-	static Bone[] bones = new Bone[skeleton.length];
+	static ArrayList<Bone> bones = new ArrayList<Bone>(skeleton.length);
 	
 	//static double[][] segments = basicDonut;
 	static double[][] segments = WGBParser.getSegs(0);
+	
+	Point2D inter;
+	Bone b1,b2;
 	
 	
 	public void setUpMap() {
@@ -62,79 +64,129 @@ public class UltimateSkeleton implements SkeletonMap {
 			points[i] = geometryFactory.createLineString(visCoords);
 		}		
 		map = geometryFactory.createMultiLineString(points);
-		
 		for(int i=0; i<skeleton.length; i++) 
-			bones[i] = new Bone(skeleton[i][0],skeleton[i][1],skeleton[i][2],skeleton[i][3]);
+			bones.add( new Bone(skeleton[i][0],skeleton[i][1],skeleton[i][2],skeleton[i][3]));		
+		boolean changed = true;
+		
+		while(changed) { // if lines intersect, split
+			changed = false;			
+			for(int i=0; i<bones.size()&&!changed; i++)
+				for(int j=i+1; j<bones.size()&&!changed; j++) 
+					if (bones.get(i).getInterType(bones.get(j))==2) {
+						inter = bones.get(i).getInter(bones.get(j));
+						if(inter.equals(bones.get(i).getFirstPoint())||inter.equals(bones.get(i).getSecondPoint())) {
+							b2=bones.get(j);
+							bones.remove(j);
+							bones.add(new Bone(b2.getFirstPoint().getX(),b2.getFirstPoint().getY(),
+									inter.getX(),inter.getY()));
+							bones.add(new Bone(inter.getX(),inter.getY(),
+									b2.getSecondPoint().getX(),b2.getSecondPoint().getY()));
+							changed = true;
+						}
+						else if (inter.equals(bones.get(j).getFirstPoint())||inter.equals(bones.get(j).getSecondPoint())) {
+							b2=bones.get(i);
+							bones.remove(i);
+							bones.add(new Bone(b2.getFirstPoint().getX(),b2.getFirstPoint().getY(),
+									inter.getX(),inter.getY()));
+							bones.add(new Bone(inter.getX(),inter.getY(),
+									b2.getSecondPoint().getX(),b2.getSecondPoint().getY()));		
+							changed = true;
+						}				//last 2 cases are T-cases		
+						else {			
+							b1 = bones.get(i);
+							b2= bones.get(j);
+							bones.remove(i);
+							bones.remove(j);
+							bones.add(new Bone(b1.getFirstPoint().getX(),b1.getFirstPoint().getY(),
+									inter.getX(),inter.getY()));
+							bones.add(new Bone(inter.getX(),inter.getY(),
+									b1.getSecondPoint().getX(),b1.getSecondPoint().getY()));	
+							bones.add(new Bone(b2.getFirstPoint().getX(),b2.getFirstPoint().getY(),
+									inter.getX(),inter.getY()));
+							bones.add(new Bone(inter.getX(),inter.getY(),
+									b2.getSecondPoint().getX(),b2.getSecondPoint().getY()));	
+							changed = true;
+						}						
+					}
+		}
+			
+		for(int i=0; i<bones.size(); i++) // join the lines intersecting at the tips
+			for(int j=i+1; j<bones.size(); j++) 
+				if (bones.get(i).getInterType(bones.get(j))==1) {
+					inter = bones.get(i).getInter(bones.get(j));
+					bones.get(i).addConnection(inter.getX(), inter.getY(), bones.get(j));
+					bones.get(j).addConnection(inter.getX(), inter.getY(), bones.get(i));
+			}
 		
 		
-		bones[0].addConnection(29.38,54.23, bones[1]);
-		bones[0].addConnection(29.38,54.23, bones[3]);
-		bones[0].addConnection(29.38,54.23, bones[4]);
+		/*bones.get(0).addConnection(29.38,54.23, bones.get(1));
+		bones.get(0).addConnection(29.38,54.23, bones.get(3));
+		bones.get(0).addConnection(29.38,54.23, bones.get(4));
 		
 		
-		bones[1].addConnection(29.38, 54.23, bones[0]);
-		bones[1].addConnection(29.38, 54.23, bones[3]);
-		bones[1].addConnection(29.38, 54.23, bones[4]);
+		bones.get(1).addConnection(29.38, 54.23, bones.get(0));
+		bones.get(1).addConnection(29.38, 54.23, bones.get(3));
+		bones.get(1).addConnection(29.38, 54.23, bones.get(4));
 		
-		bones[1].addConnection(38.23,54.23,bones[2]);
-		bones[1].addConnection(38.23,54.23,bones[6]);
-		bones[1].addConnection(38.23,54.23,bones[12]);
+		bones.get(1).addConnection(38.23,54.23,bones.get(2));
+		bones.get(1).addConnection(38.23,54.23,bones.get(6));
+		bones.get(1).addConnection(38.23,54.23,bones.get(12));
 		
-		bones[2].addConnection(38.23,54.23,bones[1]);
-		bones[2].addConnection(38.23,54.23,bones[6]);
-		bones[2].addConnection(38.23,54.23,bones[12]);
+		bones.get(2).addConnection(38.23,54.23,bones.get(1));
+		bones.get(2).addConnection(38.23,54.23,bones.get(6));
+		bones.get(2).addConnection(38.23,54.23,bones.get(12));
 		
-		bones[2].addConnection(74.38, 54.23, bones[7]);
-		bones[2].addConnection(74.38, 54.23, bones[8]);		
-		bones[2].addConnection(74.38, 54.23, bones[9]);
-		
-		
-		bones[3].addConnection(29.38, 54.23, bones[0]);
-		bones[3].addConnection(29.38, 54.23, bones[1]);		
-		bones[3].addConnection(29.38, 54.23, bones[4]);		
+		bones.get(2).addConnection(74.38, 54.23, bones.get(7));
+		bones.get(2).addConnection(74.38, 54.23, bones.get(8));		
+		bones.get(2).addConnection(74.38, 54.23, bones.get(9));
 		
 		
-		bones[4].addConnection(29.38, 54.23, bones[0]);
-		bones[4].addConnection(29.38, 54.23, bones[1]);		
-		bones[4].addConnection(29.38, 54.23, bones[3]);
-		
-		bones[5].addConnection(38.23, 15.23, bones[6]);
-		bones[5].addConnection(38.23, 15.23, bones[10]);
-		bones[5].addConnection(38.23, 15.23, bones[11]);		
-		
-		bones[6].addConnection(38.23, 15.23, bones[5]);
-		bones[6].addConnection(38.23, 15.23, bones[10]);
-		bones[6].addConnection(38.23, 15.23, bones[11]);
-		
-		bones[6].addConnection(38.23,54.23,bones[1]);
-		bones[6].addConnection(38.23,54.23,bones[2]);
-		bones[6].addConnection(38.23,54.23,bones[12]);	
-		
-		bones[7].addConnection(74.38, 54.23, bones[2]);
-		bones[7].addConnection(74.38, 54.23, bones[8]);		
-		bones[7].addConnection(74.38, 54.23, bones[9]);
-		
-		bones[8].addConnection(74.38, 54.23, bones[2]);
-		bones[8].addConnection(74.38, 54.23, bones[7]);		
-		bones[8].addConnection(74.38, 54.23, bones[9]);
-		
-		bones[9].addConnection(74.38, 54.23, bones[2]);
-		bones[9].addConnection(74.38, 54.23, bones[7]);		
-		bones[9].addConnection(74.38, 54.23, bones[8]);
-		
-		bones[10].addConnection(38.23, 15.23, bones[6]);
-		bones[10].addConnection(38.23, 15.23, bones[5]);
-		bones[10].addConnection(38.23, 15.23, bones[11]);	
+		bones.get(3).addConnection(29.38, 54.23, bones.get(0));
+		bones.get(3).addConnection(29.38, 54.23, bones.get(1));		
+		bones.get(3).addConnection(29.38, 54.23, bones.get(4));		
 		
 		
-		bones[11].addConnection(38.23, 15.23, bones[6]);
-		bones[11].addConnection(38.23, 15.23, bones[10]);
-		bones[11].addConnection(38.23, 15.23, bones[5]);		
+		bones.get(4).addConnection(29.38, 54.23, bones.get(0));
+		bones.get(4).addConnection(29.38, 54.23, bones.get(1));		
+		bones.get(4).addConnection(29.38, 54.23, bones.get(3));
+		
+		bones.get(5).addConnection(38.23, 15.23, bones.get(6));
+		bones.get(5).addConnection(38.23, 15.23, bones.get(10));
+		bones.get(5).addConnection(38.23, 15.23, bones.get(11));		
+		
+		bones.get(6).addConnection(38.23, 15.23, bones.get(5));
+		bones.get(6).addConnection(38.23, 15.23, bones.get(10));
+		bones.get(6).addConnection(38.23, 15.23, bones.get(11));
+		
+		bones.get(6).addConnection(38.23,54.23,bones.get(1));
+		bones.get(6).addConnection(38.23,54.23,bones.get(2));
+		bones.get(6).addConnection(38.23,54.23,bones.get(12));	
+		
+		bones.get(7).addConnection(74.38, 54.23, bones.get(2));
+		bones.get(7).addConnection(74.38, 54.23, bones.get(8));		
+		bones.get(7).addConnection(74.38, 54.23, bones.get(9));
+		
+		bones.get(8).addConnection(74.38, 54.23, bones.get(2));
+		bones.get(8).addConnection(74.38, 54.23, bones.get(7));		
+		bones.get(8).addConnection(74.38, 54.23, bones.get(9));
+		
+		bones.get(9).addConnection(74.38, 54.23, bones.get(2));
+		bones.get(9).addConnection(74.38, 54.23, bones.get(7));		
+		bones.get(9).addConnection(74.38, 54.23, bones.get(8));
+		
+		bones.get(10).addConnection(38.23, 15.23, bones.get(6));
+		bones.get(10).addConnection(38.23, 15.23, bones.get(5));
+		bones.get(10).addConnection(38.23, 15.23, bones.get(11));	
 		
 		
-		bones[12].addConnection(38.23,54.23,bones[2]);
-		bones[12].addConnection(38.23,54.23,bones[6]);
-		bones[12].addConnection(38.23,54.23,bones[1]);		
+		bones.get(11).addConnection(38.23, 15.23, bones.get(6));
+		bones.get(11).addConnection(38.23, 15.23, bones.get(10));
+		bones.get(11).addConnection(38.23, 15.23, bones.get(5));		
+		
+		
+		bones.get(12).addConnection(38.23,54.23,bones.get(2));
+		bones.get(12).addConnection(38.23,54.23,bones.get(6));
+		bones.get(12).addConnection(38.23,54.23,bones.get(1));		*/
 		
 		
 		
@@ -157,7 +209,7 @@ public class UltimateSkeleton implements SkeletonMap {
 	}
 	
 	public Bone[] getSkeleton() {
-		return bones;
+		return bones.toArray(new Bone[bones.size()]);
 	}
 
 	public Shape getWalls() {

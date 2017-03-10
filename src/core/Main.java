@@ -3,7 +3,7 @@ package core;
 import Filters.BasicSkeletonFilter;
 import Filters.PolarFilter;
 import Inputs.Input;
-import Inputs.StraightInput;
+import Inputs.LeftTurn;
 import Maps.Map;
 import Maps.SkeletonMap;
 import Maps.UltimateMap;
@@ -17,18 +17,16 @@ public class Main {
 	static public SkeletonMap skeleMap = new UltimateSkeleton(10,10);
 	static public PolarFilter filter = new PolarFilter();
 	static public BasicSkeletonFilter skeleFilter = new BasicSkeletonFilter();
-	static public Input inputGenerator = new StraightInput();
+	static public Input inputGenerator = new LeftTurn();
 
 	public static void main(String[] args) {	
 		
 		new Visualiser(skeleMap).visualise();
 			while(inputGenerator.hasInputs()) {	
-				try{Thread.sleep(100);}
+				try{Thread.sleep(1000000000);}
 				catch(Exception e){};
 				skeleFilter.performStep();		
-			}	
-			
-			
+			}			
 	}
 	
 }
