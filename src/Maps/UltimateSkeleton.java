@@ -28,7 +28,7 @@ public class UltimateSkeleton implements SkeletonMap {
 	private  Point realLocation;
 	private GridIntersector gridIntersector;	
 
-	static double[][] skeleton = new double[][] {
+	/*static double[][] skeleton = new double[][] {
 		{7.23,54.23,29.38,54.23},
 		{29.38,54.23,38.23,54.23},
 		{38.23,54.23,74.38,54.23},
@@ -42,6 +42,13 @@ public class UltimateSkeleton implements SkeletonMap {
 		{7.69,15.23,38.23,15.23},
 		{38.23,15.23,73,15.23},
 		{38.23,54.23,38.23,57.07}			
+	};*/
+	
+	static double[][] skeleton = new double[][] {
+		{15,15,15,50},
+		{7,40,30,40},
+		{15,15,15,5},
+		{30,40,30.02,40}
 	};
 
 	
@@ -67,16 +74,15 @@ public class UltimateSkeleton implements SkeletonMap {
 		for(int i=0; i<skeleton.length; i++) 
 			bones.add( new Bone(skeleton[i][0],skeleton[i][1],skeleton[i][2],skeleton[i][3]));		
 		boolean changed = true;
-		
 		while(changed) { // if lines intersect, split
 			changed = false;			
-			for(int i=0; i<bones.size()&&!changed; i++)
-				for(int j=i+1; j<bones.size()&&!changed; j++) 
+			for(int i=0; (i<bones.size())&&!changed; i++)
+				for(int j=i+1; (j<bones.size())&&!changed; j++) 
 					if (bones.get(i).getInterType(bones.get(j))==2) {
 						inter = bones.get(i).getInter(bones.get(j));
 						if(inter.equals(bones.get(i).getFirstPoint())||inter.equals(bones.get(i).getSecondPoint())) {
 							b2=bones.get(j);
-							bones.remove(j);
+							bones.remove(b2);
 							bones.add(new Bone(b2.getFirstPoint().getX(),b2.getFirstPoint().getY(),
 									inter.getX(),inter.getY()));
 							bones.add(new Bone(inter.getX(),inter.getY(),
@@ -85,18 +91,18 @@ public class UltimateSkeleton implements SkeletonMap {
 						}
 						else if (inter.equals(bones.get(j).getFirstPoint())||inter.equals(bones.get(j).getSecondPoint())) {
 							b2=bones.get(i);
-							bones.remove(i);
+							bones.remove(b2);
 							bones.add(new Bone(b2.getFirstPoint().getX(),b2.getFirstPoint().getY(),
 									inter.getX(),inter.getY()));
 							bones.add(new Bone(inter.getX(),inter.getY(),
 									b2.getSecondPoint().getX(),b2.getSecondPoint().getY()));		
 							changed = true;
-						}				//last 2 cases are T-cases		
-						else {			
+						}				//previous 2 cases are T-cases		
+						else {		
 							b1 = bones.get(i);
 							b2= bones.get(j);
-							bones.remove(i);
-							bones.remove(j);
+							bones.remove(b1);
+							bones.remove(b2);
 							bones.add(new Bone(b1.getFirstPoint().getX(),b1.getFirstPoint().getY(),
 									inter.getX(),inter.getY()));
 							bones.add(new Bone(inter.getX(),inter.getY(),
@@ -117,6 +123,8 @@ public class UltimateSkeleton implements SkeletonMap {
 					bones.get(i).addConnection(inter.getX(), inter.getY(), bones.get(j));
 					bones.get(j).addConnection(inter.getX(), inter.getY(), bones.get(i));
 			}
+		
+		System.out.println(bones.size());
 		
 		
 		/*bones.get(0).addConnection(29.38,54.23, bones.get(1));
