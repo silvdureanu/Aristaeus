@@ -3,6 +3,8 @@ package Maps;
 import java.awt.Shape;
 import java.util.List;
 
+import org.apache.commons.math3.ml.clustering.Cluster;
+
 import com.vividsolutions.jts.awt.ShapeWriter;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -13,20 +15,21 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
-import Inputs.PolarInput;
 import Particles.Particle;
+import core.ClusterSkeletonParticleWrapper;
 import core.Main;
 
 
 public class UltimateMap implements Map {
 	
-	double screenFactor = 20;
+	double screenFactor = 50;
 	private  MultiLineString map;
 	private MultiLineString visMap;
 	private  GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel());
 	private  ShapeWriter shapeWriter = new ShapeWriter();
 	private  Point realLocation;
 	private GridIntersector gridIntersector;
+	double realx,realy,realh;
 	static double[][] basicDonut = new double[][]{
 		{5,5,5,995},{5,995,495,995},{495,995,495,5},{495,5,5,5},
 		{100,100,100,900},{100,900,400,900},{400,900,400,100},{400,100,100,100}
@@ -37,8 +40,25 @@ public class UltimateMap implements Map {
 		{100,100,100,830},{100,830,300,830},{300,830,300,870},{300,870,100,870},{100,870,100,900},{100,900,400,900},{400,900,400,100},{400,100,100,100}		
 	};
 	
+	static double[][] bigMap= new double[][] {
+		{5,5,7,5},
+		{7,5,7,9},
+		{7,9,11,9},
+		{11,9,11,5},
+		{11,5,15,5},
+		{15,5,15,10},
+		{15,10,14,10},
+		{14,10,14,7},
+		{14,7,12,7},
+		{12,7,12,10},
+		{12,10,7,10},
+		{7,10,5,10},
+		{5,10,5,5}
+	};
+	
 	//static double[][] segments = basicDonut;
-	static double[][] segments = WGBParser.getSegs(0);
+	//static double[][] segments = WGBParser.getSegs(0);
+	static double[][] segments=bigMap;
 	
 	
 	public void setUpMap() {
@@ -57,22 +77,29 @@ public class UltimateMap implements Map {
 		}		
 		map = geometryFactory.createMultiLineString(points);
 		visMap = geometryFactory.createMultiLineString(interPoints);
-		gridIntersector = new GridIntersector(80,80,90,90,segments);
+		gridIntersector = new GridIntersector(10,10,20,20,segments);//10 10 20 20
 	}
 	
-	public UltimateMap(double initX, double initY) {
+	public UltimateMap(double initX, double initY, double initH) {
+		realx=initX;
+		realy=initY;
+		realh=initH;
 		realLocation = geometryFactory.createPoint(new Coordinate(screenFactor*initX,screenFactor*initY));	
 		setUpMap();
 	}
 	
 	public void updateRealLocation() {
 		double[] i = Main.inputGenerator.generateRealInput();
-		double x = realLocation.getX();
-		double y = realLocation.getY();
+		double mx = realLocation.getX()+9;
+		double my = realLocation.getY()+31;
+		realh = ((int)realh+i[1])%360;
 		
-		double newX = x + screenFactor*i[0] * Math.cos(Math.toRadians(i[1]));
-		double newY = y- screenFactor*i[0] * Math.sin(Math.toRadians(i[1])); // Y coordinates start at the top, so need to invert
-		realLocation = geometryFactory.createPoint(new Coordinate(newX,newY));
+		realx = realx + i[0] * Math.cos(Math.toRadians(realh));
+		realy = realy- i[0] * Math.sin(Math.toRadians(realh));
+		
+		double newX = mx + screenFactor*i[0] * Math.cos(Math.toRadians(realh));
+		double newY = my- screenFactor*i[0] * Math.sin(Math.toRadians(realh)); // Y coordinates start at the top, so need to invert
+		realLocation = geometryFactory.createPoint(new Coordinate(newX-9,newY-31));
 	}
 	
 	public boolean crossesWall(Particle p, double newX, double newY) {
@@ -109,6 +136,26 @@ public class UltimateMap implements Map {
 		return shapeWriter.toShape(particles);
 	}
 	
-	
+	public double getAccuracy(Cluster<ClusterSkeletonParticleWrapper> c) {
+		double totx,toty;
+		totx=toty=0;
+		List<ClusterSkeletonParticleWrapper> l = c.getPoints();
+		for(ClusterSkeletonParticleWrapper r: l) {
+			double[] pt = r.getPoint();
+			//totacc+=(Math.sqrt(pt[0]*realx+pt[1]*realy));
+			totx+=pt[0];
+			toty+=pt[1];
+			
+		}
+		totx/=l.size();
+		toty/=l.size();
+		
+		return Math.sqrt((totx-realx)*(totx-realx)+(toty-realy)*(toty-realy));
+	}
+	public void reset(double a, double b, double c) {
+		realx=a;
+		realy=b;
+		realh=c;
+	}
 	
 }

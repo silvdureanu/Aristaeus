@@ -11,19 +11,20 @@ import Particles.ParticleSet;
 import Particles.SkeletonParticle;
 import core.Main;
 
-public class BasicSkeletonFilter implements Filter {
+public class wtfskelfilter implements Filter {
 	
 	ParticleSet<SkeletonParticle> particleSet;
 	
-	double alpha = 0.05;
-	double beta = 0.042;
-	
-	public BasicSkeletonFilter() {
+	double Aalpha = 0;
+	double Balpha = 25;
+	double Abeta = 25;
+	double Bbeta = 80;
+	public wtfskelfilter() {
 		particleSet = new ParticleSet<SkeletonParticle>();
-		particleSet.seedParticles((Class)SkeletonParticle.class,1000000);		
+		particleSet.seedParticles((Class)SkeletonParticle.class,10000);		
 	}
-	
 
+	
 	static int bsearch(double value, double[] v) {  // returns min(i) s.t. v[i]>=value
 		int hi,lo,mid;
 		lo = 0; 
@@ -65,19 +66,21 @@ public class BasicSkeletonFilter implements Filter {
 	public void performStep() {
 		List<SkeletonParticle> particles = particleSet.getParticles();
 		List<SkeletonParticle> newParticles = new ArrayList<SkeletonParticle>();
-		double epiphysize = 130; // depending on domain; Should probably be 1-1.5 avg "steps"?
+		double epiphysize = 0.7; // depending on domain; Should probably be 1-1.5 avg "steps"?
 		
 		Random randomSeed = new Random();
 		double[] movement = Main.inputGenerator.generateStepInput();
-		Boolean fleg = true;
 		double totalWeight = 0;
 		for(SkeletonParticle p: particles) {
+			double palpha = p.getAlpha();
+			double pbeta = p.getBeta();
 			double gauss1 = randomSeed.nextGaussian();	
 			double gauss2 = randomSeed.nextGaussian();
-			double dm = movement[0]+ gauss1 * 10;
+			double dm = movement[0]+ gauss1 * 0.02;
 			double dh=movement[1] + gauss2 * 2;
 			boolean hoisted = false;
 			double newP = 0;
+			double alphafact = 0;
 			
 			Bone bone = p.getSeg();
 			double dist = p.getDist();
@@ -91,7 +94,7 @@ public class BasicSkeletonFilter implements Filter {
 					
 					Joint next =  bone.nextSecondBone(dh);
 					Bone nextBone= next.getNextBone();
-					//since we calc prob based on angle, just return random next spline?
+					//since we calc prob based on angle, just return random next spline? (you from the future: yep)
 					int prevDir = dir;
 					dir = next.getNextDir();
 					
@@ -106,28 +109,37 @@ public class BasicSkeletonFilter implements Filter {
 					double angle = Math.acos(Math.min(1, dotProd(firstVector,secondVector)/ firstVector.distance(0, 0) / secondVector.distance(0, 0)));
 					int direction = crossProd(firstVector,secondVector) > 0 ? -1: 1; // inversion due to Y starting up
 					
+					angle *= direction; // to have full trig circle	
+					double pbdir = pbeta>0? 1:-1; 
+					double padir = palpha>0? 1:-1;
 
-					angle *= direction; // to have full trig circle		
-				
+					if(pbeta!=0)
+						angle += pbdir*Math.toRadians(Abeta* Math.exp(-Bbeta/Math.abs(pbeta))); // plus/minus through pbdir
+					
+					double angdir = angle>0? 1:-1;
+					padir*=angdir; // alpha drift direction same or different to angle direction
+					if(palpha!=0) //alpha interacts with beta now
+						alphafact = padir*Math.abs(Math.sin(angle)) * Aalpha* Math.exp(-Balpha/Math.abs(palpha));
+					palpha=pbeta = 0;
 					newP = Math.cos(Math.abs(angle - Math.toRadians(dh) ));
-					if(Double.isNaN(angle)) {
-						System.out.println("atcos");
-						System.out.println(firstVector);
-						System.out.println(secondVector);
-						System.out.println(dotProd(firstVector,secondVector));
-						System.out.println(firstVector.distance(0, 0));
-						System.out.println(secondVector.distance(0, 0));
-						System.out.println(dotProd(firstVector,secondVector)/ firstVector.distance(0, 0) / secondVector.distance(0, 0));
-					}
-					//System.out.println(newP);
-					if(newP<0.1)
+	
+
+					if(newP<0.2)
 						newP = 0;
 					bone = nextBone;
 					
-					if(dir==1)
+					if(dir==1) {
 						dist = (dm *newP / bone.getLen());
-					else if(dir==2)
-						dist = 1 - dm*newP / bone.getLen();		
+						if(alphafact<0)
+							dist = Math.max(dist-alphafact/bone.getLen(),0);
+						else dist += (alphafact/bone.getLen());
+					}
+					else if(dir==2) {
+						dist = 1 - dm*newP / bone.getLen();
+						if (alphafact<0)
+							dist = Math.min(1, dist+alphafact/bone.getLen());
+						else dist -=(alphafact/bone.getLen());
+					}
 
 					
 				}
@@ -145,29 +157,48 @@ public class BasicSkeletonFilter implements Filter {
 					
 					int d = dir ==prevDir ? 1:-1;
 					
-					Point2D secondVector = new Point2D.Double(d*(bone.getSecondPoint().getX()-bone.getFirstPoint().getX()),
-							d*(bone.getSecondPoint().getY()-bone.getFirstPoint().getY()));
+					Point2D firstVector = new Point2D.Double(bone.getFirstPoint().getX()-bone.getSecondPoint().getX(),
+							bone.getFirstPoint().getY()-bone.getSecondPoint().getY());
 					
-					Point2D firstVector = new Point2D.Double(nextBone.getSecondPoint().getX()-nextBone.getFirstPoint().getX(),
-							nextBone.getSecondPoint().getY()-nextBone.getFirstPoint().getY());
+					Point2D secondVector = new Point2D.Double(d*(nextBone.getFirstPoint().getX()-nextBone.getSecondPoint().getX()),
+							d*(nextBone.getFirstPoint().getY()-nextBone.getSecondPoint().getY()));
 					
-					double angle = Math.acos(Math.min(1,dotProd(firstVector,secondVector)/ firstVector.distance(0, 0) / secondVector.distance(0, 0)));
-
-
-					// must do cross prod in terms of directions, not absolute vals
+					double angle = Math.acos(Math.min(1, dotProd(firstVector,secondVector)/ firstVector.distance(0, 0) / secondVector.distance(0, 0)));
+					
 					int direction = crossProd(firstVector,secondVector) > 0 ? -1: 1; // inversion due to Y starting up
-					angle *= direction; // to have full trig circle			
-					
-					newP = -1*Math.cos(Math.abs(angle - Math.toRadians(dh) ));		//NO idea why this works	
-					
+					angle *= direction; // to have full trig circle	
+					double pbdir = pbeta>0? 1:-1; 
+					double padir = palpha>0? 1:-1;
 
-					if(newP<0.1)
+					if(pbeta!=0)
+						angle += pbdir* Math.toRadians(Abeta* Math.exp(-Bbeta/Math.abs(pbeta)));
+					
+					
+					
+					double angdir = angle>0? 1:-1;
+					padir*=angdir; // alpha drift direction same or different to angle direction
+					if(palpha!=0) //alpha interacts with beta now
+						alphafact = padir*Math.abs(Math.sin(angle)) * Aalpha* Math.exp(-Balpha/Math.abs(palpha));
+					palpha=pbeta=0;
+					
+					newP = Math.cos(Math.abs(angle - Math.toRadians(dh) ));
+
+
+					if(newP<0.2)
 						newP = 0;
 					bone = nextBone;
-					if(dir==1)
+					if(dir==1) {
 						dist = (dm *newP / bone.getLen());
-					else if(dir==2)
-						dist = 1 - dm*newP / bone.getLen();		
+						if(alphafact<0)
+							dist = Math.max(dist-alphafact/bone.getLen(),0);
+						else dist += (alphafact/bone.getLen());
+					}
+					else if(dir==2) {
+						dist = 1 - dm*newP / bone.getLen();
+						if (alphafact<0)
+							dist = Math.min(1, dist+alphafact/bone.getLen());
+						else dist -=(alphafact/bone.getLen());
+					}
 				}					
 			}
 			
@@ -175,8 +206,14 @@ public class BasicSkeletonFilter implements Filter {
 				double findist = cosProd(dm,dh) / bone.getLen(); 
 				
 				newP = Math.min(Math.abs(Math.cos(Math.toRadians(dh))),1); //min there in case cos is changed to something else that overestimates
-
-				
+				if(Math.abs(dh)>6) {//avoid noise
+					palpha +=dh;
+					pbeta+=dh;
+				}
+				else {
+					palpha /=1.15;
+					pbeta /=1.15;
+				}
 				//dir 1 is from first point to second, 2 is opposite. If dot product <0, the direction has switched
 				if(findist<0) {
 					dir = 3-dir;
@@ -202,15 +239,18 @@ public class BasicSkeletonFilter implements Filter {
 			p.setDist(dist);
 			p.setDir(dir);
 			p.setProb(newP);
-			
+			p.setAlpha(palpha);
+			p.setBeta(pbeta);
 			totalWeight += newP;
-
+		
 			
 		}
 		if(totalWeight==0) {   //fix division by zero......
 			particleSet.setParticles(newParticles);
 			return;
 		}	
+		if(movement[1]>10)
+			System.out.println("turniin");
 		double sumSoFar[] = new double[particles.size()];
 		sumSoFar[0] = particles.get(0).getProb() / totalWeight;
 		
@@ -223,7 +263,7 @@ public class BasicSkeletonFilter implements Filter {
 			SkeletonParticle p = particles.get(dex);
 			newParticles.add(new SkeletonParticle(p.getSeg(),p.getDist(),p.getDir(), p.getProb(),p.getAlpha(),p.getBeta()));				
 		}
-		Main.skeleMap.updateRealLocation();
+		Main.map.updateRealLocation();
 		particleSet.setParticles(newParticles); 		
 	}
 	public List<SkeletonParticle> getParticles() {

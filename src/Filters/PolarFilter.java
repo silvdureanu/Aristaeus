@@ -14,7 +14,7 @@ public class PolarFilter implements Filter {
 	
 	public PolarFilter() {
 		particleSet = new ParticleSet<Particle>();
-		particleSet.seedParticles((Class)Particle.class, 100000);
+		particleSet.seedParticles((Class)Particle.class, 10000);
 	}
 	
 	static int bsearch(double value, double[] v) {  // returns min(i) s.t. v[i]>=value
@@ -43,6 +43,7 @@ public class PolarFilter implements Filter {
 		List<Particle> newParticles = new ArrayList<Particle>();
 		
 		Random randomSeed = new Random();
+		Main.map.updateRealLocation();
 		double[] movement = Main.inputGenerator.generateStepInput();
 		double totalWeight = 0;
 		
@@ -50,7 +51,7 @@ public class PolarFilter implements Filter {
 		for(Particle p: particles) {
 			double gauss1 = randomSeed.nextGaussian();	
 			double gauss2 = randomSeed.nextGaussian();
-			double dm = movement[0]+ gauss1 * 0.1;
+			double dm = movement[0]+ gauss1 *0.05;
 			double dh=movement[1] + gauss2 * 1.5; // need to tune parameters
 			
 			double newH = ((int)p.getH()+dh)%360;			
@@ -89,7 +90,7 @@ public class PolarFilter implements Filter {
 			newParticles.add(new Particle(p.getX(),p.getY(),p.getH()));		//todo no new particles		
 		}
 		
-		Main.map.updateRealLocation();
+
 		particleSet.setParticles(newParticles); 		
 	}
 	public List<Particle> getParticles() {

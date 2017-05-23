@@ -72,6 +72,9 @@ public class FirstSkeleton implements SkeletonMap {
 		setUpMap();
 	}
 
+	public void updateRealLocation(){
+		
+	}
 	
 	public Bone[] getSkeleton() {
 		return bones;

@@ -28,8 +28,13 @@ public class ParticleSet<ParticleType> {
 			int nrSeeded = 0;
 			Random randomSeed = new Random();
 			while(nrSeeded<nr) {
-				double xCoord = randomSeed.nextDouble()*80;
-				double yCoord = randomSeed.nextDouble()*80;
+				double xCoord = randomSeed.nextDouble()*20;
+				double yCoord = randomSeed.nextDouble()*11;
+				/*while((xCoord>100&&xCoord<400)&&(yCoord>100&&yCoord<900)){
+					xCoord = randomSeed.nextDouble()*500;
+					yCoord = randomSeed.nextDouble()*1000;
+				}*/
+					
 				int hDir = randomSeed.nextInt(361);
 				
 				try{
@@ -43,10 +48,10 @@ public class ParticleSet<ParticleType> {
 		}
 		
 		else if(c.equals(SkeletonParticle.class)) {
-			Class[] args = new Class[4];		
+			Class[] args = new Class[6];		
 			args[0] = Bone.class;
-			args[1]=args[3] = double.class;
-			args[2] = int.class;			
+			args[1]=args[3] = args[4]=args[5]=double.class;
+			args[2] =int.class;			
 			particles = new ArrayList<ParticleType>();
 			int nrSeeded = 0;
 			Bone[] bones = Main.skeleMap.getSkeleton();
@@ -58,7 +63,7 @@ public class ParticleSet<ParticleType> {
 				int dir = randomSeed.nextInt(2)+1;
 				double p = 1;
 				try{
-				particles.add(c.getDeclaredConstructor(args).newInstance(bones[boneCoord],length,dir,p));
+				particles.add(c.getDeclaredConstructor(args).newInstance(bones[boneCoord],length,dir,p,0.0,0.0));
 				nrSeeded++;		
 				}
 				catch(Exception e) {

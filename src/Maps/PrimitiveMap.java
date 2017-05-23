@@ -10,4 +10,5 @@ public interface PrimitiveMap {
 	public  Shape getWalls();	
 	public  Shape getRealLocation();	
 	public  Shape getParticles();
+	public void updateRealLocation();
 }

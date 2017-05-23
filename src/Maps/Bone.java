@@ -4,6 +4,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Bone {
 	private Point2D firstPoint;
@@ -11,6 +12,7 @@ public class Bone {
 	private double len;
 	private List<Joint> firstConnections;
 	private List<Joint> secondConnections;
+	private Random randomSeed = new Random();
 	
 	public Bone(double x1, double y1, double x2, double y2) {
 		if((x1<x2) || (x1==x2 && y1<y2)) {
@@ -150,13 +152,16 @@ public class Bone {
 		
 	}
 	
-	//Basic version returns "random" (1st element)
-	public Joint nextFirstBone(double heading) {
-		return firstConnections.get(0);
+	// returns random to avoid "overfit"; 
+	public Joint nextFirstBone(double heading) {		
+		int next = randomSeed.nextInt(firstConnections.size());
+		return firstConnections.get(next);
 	}
 	
 	public Joint nextSecondBone(double heading) {
-		return secondConnections.get(0);
+		int next = randomSeed.nextInt(secondConnections.size());
+		
+		return secondConnections.get(next);
 	}
 	
 	public Boolean hasNextFirst() {

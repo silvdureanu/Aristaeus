@@ -5,6 +5,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import core.Main;
+
 public class GridIntersector {
 
 	private List<Line2D> gridSegments[][];
@@ -82,9 +84,10 @@ public class GridIntersector {
 		//check up to all 4 possible boxes, just in case  the 3-square corner case happens
 		for (int i=Math.min(i1,i2); i<=Math.max(i1,i2); i++)
 			for (int j=Math.min(j1,j2); j<=Math.max(j1,j2); j++) {
-				for (Line2D l : gridSegments[i][j])
+				for (Line2D l : gridSegments[i][j]) {
 					if(l.intersectsLine(line))
 						return true;
+				}
 			}
 		return false;
 	}
